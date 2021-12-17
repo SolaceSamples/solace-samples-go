@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"solace.dev/go/messaging"
+	"solace.dev/go/messaging/pkg/solace"
 	"solace.dev/go/messaging/pkg/solace/config"
 	"solace.dev/go/messaging/pkg/solace/message"
 	"solace.dev/go/messaging/pkg/solace/resource"
@@ -19,6 +20,15 @@ func MessageHandler(message message.InboundMessage) {
 		fmt.Println("Message is NOT String")
 	} else {
 		fmt.Printf("payload: %v\n", payload)
+	}
+}
+
+func ReconnectionHandler(e solace.ServiceEvent) {
+	e.GetTimestamp()
+	e.GetBrokerURI()
+	err := e.GetCause()
+	if err != nil {
+		fmt.Println(err)
 	}
 }
 
@@ -40,6 +50,8 @@ func main() {
 		panic(err)
 	}
 
+	messagingService.AddReconnectionListener(ReconnectionHandler)
+
 	// Connect to the messaging serice
 	if err := messagingService.Connect(); err != nil {
 		panic(err)
@@ -48,7 +60,8 @@ func main() {
 	fmt.Println("Connected to the broker? ", messagingService.IsConnected())
 
 	// Build a Direct message receivers with given topics
-	directReciever, err := messagingService.CreateDirectMessageReceiverBuilder().
+	directReceiver, err := messagingService.CreateDirectMessageReceiverBuilder().
+		// WithSubscriptions(resource.TopicSubscriptionOf(topics_sub)).
 		WithSubscriptions(resource.TopicSubscriptionOf(TOPIC_PREFIX + "/direct/sub/>")).
 		Build()
 
@@ -56,15 +69,16 @@ func main() {
 		panic(err)
 	}
 
-	// Start Direct Message Recieer
-	if err := directReciever.Start(); err != nil {
+	// Start Direct Message Receiver
+	if err := directReceiver.Start(); err != nil {
 		panic(err)
 	}
 
-	fmt.Println("Direct Reciever running? ", directReciever.IsRunning())
+	fmt.Println("Direct Receiver running? ", directReceiver.IsRunning())
 
 	// Register Message callback handler to the Message Receiver
-	if regErr := directReciever.ReceiveAsync(MessageHandler); regErr != nil {
+	// ? I defined the MessageHandler in a separate funcion outside main()
+	if regErr := directReceiver.ReceiveAsync(MessageHandler); regErr != nil {
 		panic(regErr)
 	}
 
@@ -85,9 +99,11 @@ func main() {
 	s := <-c
 	_ = s
 
-	directReciever.Terminate(1)
-	fmt.Println("\nDirect Reciever Terminated? ", directReciever.IsTerminated())
+	// Terminate the Direct Receiver
+	directReceiver.Terminate(1)
+	fmt.Println("\nDirect Receiver Terminated? ", directReceiver.IsTerminated())
+	// Disconnect the Message Service
 	messagingService.Disconnect()
-	fmt.Println("Mesagging Service Disconnected? ", !messagingService.IsConnected())
+	fmt.Println("Messaging Service Disconnected? ", !messagingService.IsConnected())
 
 }
