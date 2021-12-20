@@ -96,18 +96,17 @@ func main() {
 	go func() {
 		println("Subscribe to topic ", TOPIC_PREFIX+"/>")
 
-		for {
+		for directPublisher.IsReady() {
 			msgSeqNum++
 			message, err := messageBuilder.BuildWithStringPayload(messageBody + " --> " + strconv.Itoa(msgSeqNum))
 			if err != nil {
 				panic(err)
 			}
-
 			publishErr := directPublisher.Publish(message, resource.TopicOf(TOPIC_PREFIX+"/hello/"+uniqueName+"/"+strconv.Itoa(msgSeqNum)))
 			if publishErr != nil {
 				panic(publishErr)
 			}
-			time.Sleep(1 * time.Second)
+			// time.Sleep(1 * time.Second)
 		}
 
 	}()
@@ -118,14 +117,18 @@ func main() {
 	signal.Notify(c, os.Interrupt)
 
 	// Block until a signal is received.
-	s := <-c
-	_ = s
+	<-c
+
+	// TODO
+	// Find way to shutdown the go routine
+	// e.g use another channel, BOOl..etc
+	// TODO
 
 	// Terminate the Direct Receiver
-	directReceiver.Terminate(1)
+	directReceiver.Terminate(2 * time.Second)
 	fmt.Println("\nDirect Receiver Terminated? ", directReceiver.IsTerminated())
 	// Terminate the Direct Publisher
-	directPublisher.Terminate(1)
+	directPublisher.Terminate(2 * time.Second)
 	fmt.Println("\nDirect Publisher Terminated? ", directPublisher.IsTerminated())
 
 	// Disconnect the Message Service

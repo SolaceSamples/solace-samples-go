@@ -15,12 +15,7 @@ import (
 
 // Message Handler
 func MessageHandler(message message.InboundMessage) {
-	payload, ok := message.GetPayloadAsString()
-	if !ok {
-		fmt.Println("Message is NOT String")
-	} else {
-		fmt.Printf("payload: %v\n", payload)
-	}
+	fmt.Printf("Message Dump %s \n", message)
 }
 
 func ReconnectionHandler(e solace.ServiceEvent) {
@@ -59,10 +54,25 @@ func main() {
 
 	fmt.Println("Connected to the broker? ", messagingService.IsConnected())
 
+	// Define Topic Subscriptions
+
+	// topics := [...]string{TOPIC_PREFIX + "/>"}
+	topics := [...]string{TOPIC_PREFIX + "/direct/sub/>", TOPIC_PREFIX + "/direct/sub/*", "solace/samples/>"}
+	topics_sup := make([]resource.Subscription, len(topics))
+
+	// Create topic objects
+	for i, topicString := range topics {
+		topics_sup[i] = resource.TopicSubscriptionOf(topicString)
+	}
+
+	// Print out list of strings to subscribe to
+	for _, ts := range topics_sup {
+		fmt.Println("Subscribed to: ", ts.GetName())
+	}
+
 	// Build a Direct message receivers with given topics
 	directReceiver, err := messagingService.CreateDirectMessageReceiverBuilder().
-		// WithSubscriptions(resource.TopicSubscriptionOf(topics_sub)).
-		WithSubscriptions(resource.TopicSubscriptionOf(TOPIC_PREFIX + "/direct/sub/>")).
+		WithSubscriptions(topics_sup...).
 		Build()
 
 	if err != nil {
@@ -77,30 +87,23 @@ func main() {
 	fmt.Println("Direct Receiver running? ", directReceiver.IsRunning())
 
 	// Register Message callback handler to the Message Receiver
-	// ? I defined the MessageHandler in a separate funcion outside main()
 	if regErr := directReceiver.ReceiveAsync(MessageHandler); regErr != nil {
 		panic(regErr)
 	}
 
-	fmt.Println("\nInterrupt (CTR+C) to handle graceful terminaltion of the subscriber")
-	// Run forever until an interrupt signal is received
-	go func() {
-		for {
-			time.Sleep(1)
-		}
-	}()
+	fmt.Println("\n===Interrupt (CTR+C) to handle graceful terminaltion of the subscriber===\n")
 
+	// Run forever until an interrupt signal is received
 	// Handle interrupts
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 
 	// Block until a signal is received.
-	s := <-c
-	_ = s
+	<-c
 
 	// Terminate the Direct Receiver
-	directReceiver.Terminate(1)
+	directReceiver.Terminate(1 * time.Second)
 	fmt.Println("\nDirect Receiver Terminated? ", directReceiver.IsTerminated())
 	// Disconnect the Message Service
 	messagingService.Disconnect()

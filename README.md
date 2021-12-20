@@ -14,7 +14,7 @@ This repo hosts sample code to showcase how the Solace PubSub+ Go API could be u
     1. [Not supported in EA] `go get solace.dev/go/messaging`
 
 ## Run Patterns
-1. Copy the PubSub+ Go API into this directory
+1. Unzip the contents of the PubSub+ Go API tar folder into a `pubsubplus-go-client` folder in this directory
 1. [Skip if existing] Initialize the directory with go modules `go mod init SolaceSamples.com/PubSub+Go`
 1. [For local development and EA] Modify the go.mod file to replace `solace.dev/go/messaging` with the local version of `./pubsubplus-go-client` by adding the following line in your go.mod file   
     ```
