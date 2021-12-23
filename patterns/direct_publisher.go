@@ -9,17 +9,11 @@ import (
 
 	"solace.dev/go/messaging"
 	"solace.dev/go/messaging/pkg/solace/config"
-	"solace.dev/go/messaging/pkg/solace/message"
 	"solace.dev/go/messaging/pkg/solace/resource"
 )
 
-// Message Handler
-// Message Handler
-func MessageHandler(message message.InboundMessage) {
-	fmt.Printf("Message Dump %s \n", message)
-}
-
 func main() {
+
 	// Define Topic Subscriptions
 	TOPIC_PREFIX := "solace/samples/go"
 
@@ -56,76 +50,49 @@ func main() {
 
 	fmt.Println("Direct Publisher running? ", directPublisher.IsRunning())
 
-	//  Build a Direct Message Receiver
-	directReceiver, err := messagingService.CreateDirectMessageReceiverBuilder().
-		WithSubscriptions(resource.TopicSubscriptionOf(TOPIC_PREFIX + "/>")).
-		Build()
-
-	if err != nil {
-		panic(err)
-	}
-
-	// Start Direct Message Receiver
-	if err := directReceiver.Start(); err != nil {
-		panic(err)
-	}
-
-	fmt.Println("Direct Receiver running? ", directReceiver.IsRunning())
-
-	if regErr := directReceiver.ReceiveAsync(MessageHandler); regErr != nil {
-		panic(regErr)
-	}
-
-	fmt.Print("\nEnter your name: ")
-	var uniqueName string
-	fmt.Scanln(&uniqueName)
+	fmt.Println("\n===Interrupt (CTR+C) to stop publishing===\n")
 
 	msgSeqNum := 0
 
 	//  Prepare outbound message payload and body
-	messageBody := "Hello from Go HelloWorld Sample"
+	messageBody := "Hello from Go Direct Publisher Sample"
 	messageBuilder := messagingService.MessageBuilder().
 		WithProperty("application", "samples").
 		WithProperty("language", "go")
 
+	// Run forever until an interrupt signal is received
 	go func() {
-		println("Subscribe to topic ", TOPIC_PREFIX+"/>")
-
 		for directPublisher.IsReady() {
 			msgSeqNum++
 			message, err := messageBuilder.BuildWithStringPayload(messageBody + " --> " + strconv.Itoa(msgSeqNum))
 			if err != nil {
 				panic(err)
 			}
-			publishErr := directPublisher.Publish(message, resource.TopicOf(TOPIC_PREFIX+"/hello/"+uniqueName+"/"+strconv.Itoa(msgSeqNum)))
+
+			topic := resource.TopicOf(TOPIC_PREFIX + "/direct/publisher/" + strconv.Itoa(msgSeqNum))
+
+			// Publish on dynamic topic with dynamic body
+			publishErr := directPublisher.Publish(message, topic)
 			if publishErr != nil {
 				panic(publishErr)
 			}
-			// time.Sleep(1 * time.Second)
-		}
 
+			fmt.Println("Message Topic: ", topic.GetName())
+			// fmt.Printf("Published message: %s\n", message)
+			time.Sleep(1 * time.Second)
+		}
 	}()
 
-	// Handle interrupts
-
+	// Handle OS interrupts
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 
-	// Block until a signal is received.
+	// Block until an OS interrupt signal is received.
 	<-c
 
-	// TODO
-	// Find way to shutdown the go routine
-	// e.g use another channel, BOOl..etc
-	// TODO
-
 	// Terminate the Direct Receiver
-	directReceiver.Terminate(2 * time.Second)
-	fmt.Println("\nDirect Receiver Terminated? ", directReceiver.IsTerminated())
-	// Terminate the Direct Publisher
-	directPublisher.Terminate(2 * time.Second)
+	directPublisher.Terminate(1 * time.Second)
 	fmt.Println("\nDirect Publisher Terminated? ", directPublisher.IsTerminated())
-
 	// Disconnect the Message Service
 	messagingService.Disconnect()
 	fmt.Println("Messaging Service Disconnected? ", !messagingService.IsConnected())
