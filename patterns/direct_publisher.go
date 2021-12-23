@@ -17,14 +17,17 @@ func main() {
 	// Define Topic Subscriptions
 	TOPIC_PREFIX := "solace/samples/go"
 
-	// Build A messaging service with a reconnection strategy of 20 retries over an interval of 3 seconds
-	// Note: The reconnections strategy could also be configured using the broker properties object
-	messagingService, err := messaging.NewMessagingServiceBuilder().FromConfigurationProvider(config.ServicePropertyMap{
+	// Configuration parameters
+	brokerConfig := config.ServicePropertyMap{
 		config.TransportLayerPropertyHost:                "tcp://localhost:55554",
 		config.ServicePropertyVPNName:                    "default",
 		config.AuthenticationPropertySchemeBasicPassword: "default",
 		config.AuthenticationPropertySchemeBasicUserName: "default",
-	}).Build()
+	}
+
+	// Build A messaging service with a reconnection strategy of 20 retries over an interval of 3 seconds
+	// Note: The reconnections strategy could also be configured using the broker properties object
+	messagingService, err := messaging.NewMessagingServiceBuilder().FromConfigurationProvider(brokerConfig).Build()
 
 	if err != nil {
 		panic(err)
