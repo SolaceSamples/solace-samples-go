@@ -16,3 +16,9 @@ vendor/
 
 # pubsubplus-go-client source code
 pubsubplus-go-client/
+
+# Trusted Stores 
+trust_store/
+
+# .DS_Store
+.DS_Store
