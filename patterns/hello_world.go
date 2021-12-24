@@ -38,7 +38,6 @@ func main() {
 		config.AuthenticationPropertySchemeBasicUserName: getEnv("SOLACE_USERNAME", "default"),
 	}
 
-	// Note: The reconnections strategy could also be configured using the broker properties object
 	messagingService, err := messaging.NewMessagingServiceBuilder().FromConfigurationProvider(brokerConfig).Build()
 
 	if err != nil {
