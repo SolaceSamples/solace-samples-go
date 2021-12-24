@@ -24,6 +24,10 @@ This repo hosts sample code to showcase how the Solace PubSub+ Go API could be u
 1. Run the samples. There are two way to run the samples
     - `go run`: Navigate to the [patterns](./patterns) directory and execute `go run <name_of_sample>.go`
     - `go build`: Navigate to the [patterns](./patterns) directory and execute `go build <name_of_sample>.go -o <name_of_sample>`. This will produce an executable that can be run via `./<name_of_sample>`
+1. Note on environment variables: you can pass the hostname, vpn name, username, and password as environment variables before running the samples as follows 
+```
+SOLACE_HOST=<host_name> SOLACE_VPN=<vpn_name> SOLACE_USERNAME=<username> SOLACE_PASSWORD=<password> go run <name_of_sample>.go
+```
 
 ## Howtos
 
