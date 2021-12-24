@@ -19,16 +19,24 @@ func MessageHandler(message message.InboundMessage) {
 	fmt.Printf("Message Dump %s \n", message)
 }
 
+func getEnv(key, def string) string {
+	if val, ok := os.LookupEnv(key); ok {
+		return val
+	}
+	return def
+}
+
 func main() {
+
 	// Define Topic Subscriptions
 	TOPIC_PREFIX := "solace/samples/go"
 
 	// Configuration parameters
 	brokerConfig := config.ServicePropertyMap{
-		config.TransportLayerPropertyHost:                "tcp://localhost:55554",
-		config.ServicePropertyVPNName:                    "default",
-		config.AuthenticationPropertySchemeBasicPassword: "default",
-		config.AuthenticationPropertySchemeBasicUserName: "default",
+		config.TransportLayerPropertyHost:                getEnv("SOLACE_HOST", "tcp://localhost:55554"),
+		config.ServicePropertyVPNName:                    getEnv("SOLACE_VPN", "default"),
+		config.AuthenticationPropertySchemeBasicPassword: getEnv("SOLACE_PASSWORD", "default"),
+		config.AuthenticationPropertySchemeBasicUserName: getEnv("SOLACE_USERNAME", "default"),
 	}
 
 	// Build A messaging service with a reconnection strategy of 20 retries over an interval of 3 seconds
@@ -104,7 +112,7 @@ func main() {
 			if publishErr != nil {
 				panic(publishErr)
 			}
-			// time.Sleep(1 * time.Second)
+			time.Sleep(1 * time.Second)
 		}
 
 	}()
