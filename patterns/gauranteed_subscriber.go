@@ -63,40 +63,25 @@ func main() {
 
 	fmt.Println("Connected to the broker? ", messagingService.IsConnected())
 
-	// Define Topic Subscriptions
-
-	// topics := [...]string{TOPIC_PREFIX + "/>"}
-	topics := [...]string{TOPIC_PREFIX + "/direct/sub/>", TOPIC_PREFIX + "/direct/sub/*", "solace/samples/>"}
-	topics_sup := make([]resource.Subscription, len(topics))
-
-	// Create topic objects
-	for i, topicString := range topics {
-		topics_sup[i] = resource.TopicSubscriptionOf(topicString)
-	}
-
-	// Print out list of strings to subscribe to
-	for _, ts := range topics_sup {
-		fmt.Println("Subscribed to: ", ts.GetName())
-	}
+	queueName := "sample-queue"
+	durable_exclusive_queue = *resource.QueueDurableExclusive(queueName)
 
 	// Build a Direct message receivers with given topics
-	directReceiver, err := messagingService.CreateDirectMessageReceiverBuilder().
-		WithSubscriptions(topics_sup...).
-		Build()
+	persistentReceiver, err := messagingService.CreatePersistentMessageReceiverBuilder(durable_exclusive_queue).Build()
 
 	if err != nil {
 		panic(err)
 	}
 
 	// Start Direct Message Receiver
-	if err := directReceiver.Start(); err != nil {
+	if err := persistentReceiver.Start(); err != nil {
 		panic(err)
 	}
 
-	fmt.Println("Direct Receiver running? ", directReceiver.IsRunning())
+	fmt.Println("Direct Receiver running? ", persistentReceiver.IsRunning())
 
 	// Register Message callback handler to the Message Receiver
-	if regErr := directReceiver.ReceiveAsync(MessageHandler); regErr != nil {
+	if regErr := persistentReceiver.ReceiveAsync(MessageHandler); regErr != nil {
 		panic(regErr)
 	}
 
@@ -112,8 +97,8 @@ func main() {
 	<-c
 
 	// Terminate the Direct Receiver
-	directReceiver.Terminate(1 * time.Second)
-	fmt.Println("\nDirect Receiver Terminated? ", directReceiver.IsTerminated())
+	persistentReceiver.Terminate(1 * time.Second)
+	fmt.Println("\nDirect Receiver Terminated? ", persistentReceiver.IsTerminated())
 	// Disconnect the Message Service
 	messagingService.Disconnect()
 	fmt.Println("Messaging Service Disconnected? ", !messagingService.IsConnected())

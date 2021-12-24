@@ -12,6 +12,13 @@ import (
 	"solace.dev/go/messaging/pkg/solace/resource"
 )
 
+func getEnv(key, def string) string {
+	if val, ok := os.LookupEnv(key); ok {
+		return val
+	}
+	return def
+}
+
 func main() {
 
 	// Define Topic Subscriptions
@@ -19,13 +26,12 @@ func main() {
 
 	// Configuration parameters
 	brokerConfig := config.ServicePropertyMap{
-		config.TransportLayerPropertyHost:                "tcp://localhost:55554",
-		config.ServicePropertyVPNName:                    "default",
-		config.AuthenticationPropertySchemeBasicPassword: "default",
-		config.AuthenticationPropertySchemeBasicUserName: "default",
+		config.TransportLayerPropertyHost:                getEnv("SOLACE_HOST", "tcp://localhost:55554"),
+		config.ServicePropertyVPNName:                    getEnv("SOLACE_VPN", "default"),
+		config.AuthenticationPropertySchemeBasicPassword: getEnv("SOLACE_PASSWORD", "default"),
+		config.AuthenticationPropertySchemeBasicUserName: getEnv("SOLACE_USERNAME", "default"),
 	}
 
-	// Build A messaging service with a reconnection strategy of 20 retries over an interval of 3 seconds
 	// Note: The reconnections strategy could also be configured using the broker properties object
 	messagingService, err := messaging.NewMessagingServiceBuilder().FromConfigurationProvider(brokerConfig).Build()
 
