@@ -14,7 +14,6 @@ import (
 )
 
 // Message Handler
-// Message Handler
 func MessageHandler(message message.InboundMessage) {
 	fmt.Printf("Message Dump %s \n", message)
 }
@@ -39,7 +38,6 @@ func main() {
 		config.AuthenticationPropertySchemeBasicUserName: getEnv("SOLACE_USERNAME", "default"),
 	}
 
-	// Build A messaging service with a reconnection strategy of 20 retries over an interval of 3 seconds
 	// Note: The reconnections strategy could also be configured using the broker properties object
 	messagingService, err := messaging.NewMessagingServiceBuilder().FromConfigurationProvider(brokerConfig).Build()
 
