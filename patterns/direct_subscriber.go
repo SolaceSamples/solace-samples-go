@@ -101,20 +101,19 @@ func main() {
 
 	fmt.Println("\n===Interrupt (CTR+C) to handle graceful terminaltion of the subscriber===\n")
 
-	// Run forever until an interrupt signal is received
-	// Handle interrupts
+	// cleanup after the main calling function has finished execution
+	defer func() {
+		// Terminate the Direct Receiver
+		directReceiver.Terminate(1 * time.Second)
+		fmt.Println("\nDirect Receiver Terminated? ", directReceiver.IsTerminated())
+		// Disconnect the Message Service
+		messagingService.Disconnect()
+		fmt.Println("Messaging Service Disconnected? ", !messagingService.IsConnected())
+	}()
 
+	// Run forever until an interrupt signal is received
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
-
-	// Block until a signal is received.
+	// Block until a interrupt signal is received.
 	<-c
-
-	// Terminate the Direct Receiver
-	directReceiver.Terminate(1 * time.Second)
-	fmt.Println("\nDirect Receiver Terminated? ", directReceiver.IsTerminated())
-	// Disconnect the Message Service
-	messagingService.Disconnect()
-	fmt.Println("Messaging Service Disconnected? ", !messagingService.IsConnected())
-
 }
