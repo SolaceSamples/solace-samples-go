@@ -28,7 +28,7 @@ func getEnv(key, def string) string {
 func main() {
 
 	// Define Topic Subscriptions
-	TOPIC_PREFIX := "solace/samples/go"
+	TOPIC_PREFIX := "solace/samples"
 
 	// Configuration parameters
 	brokerConfig := config.ServicePropertyMap{
@@ -66,7 +66,7 @@ func main() {
 
 	//  Build a Direct Message Receiver
 	directReceiver, err := messagingService.CreateDirectMessageReceiverBuilder().
-		WithSubscriptions(resource.TopicSubscriptionOf(TOPIC_PREFIX + "/>")).
+		WithSubscriptions(resource.TopicSubscriptionOf(TOPIC_PREFIX + "*/hello/>")).
 		Build()
 
 	if err != nil {
@@ -105,7 +105,7 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-			publishErr := directPublisher.Publish(message, resource.TopicOf(TOPIC_PREFIX+"/hello/"+uniqueName+"/"+strconv.Itoa(msgSeqNum)))
+			publishErr := directPublisher.Publish(message, resource.TopicOf(TOPIC_PREFIX+"/go/hello/"+uniqueName+"/"+strconv.Itoa(msgSeqNum)))
 			if publishErr != nil {
 				panic(publishErr)
 			}

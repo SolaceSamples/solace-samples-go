@@ -27,7 +27,7 @@ func getEnv(key, def string) string {
 func main() {
 
 	// Define Topic Subscriptions
-	TOPIC_PREFIX := "solace/samples/go"
+	TOPIC_PREFIX := "solace/samples"
 
 	// Configuration parameters
 	brokerConfig := config.ServicePropertyMap{
@@ -61,9 +61,7 @@ func main() {
 	fmt.Println("Connected to the broker? ", messagingService.IsConnected())
 
 	// Define Topic Subscriptions
-
-	// topics := [...]string{TOPIC_PREFIX + "/>"}
-	topics := [...]string{TOPIC_PREFIX + "/direct/sub/>", TOPIC_PREFIX + "/direct/sub/*", "solace/samples/>"}
+	topics := [...]string{TOPIC_PREFIX + "/>", TOPIC_PREFIX + "/direct/sub/*"}
 	topics_sup := make([]resource.Subscription, len(topics))
 
 	// Create topic objects

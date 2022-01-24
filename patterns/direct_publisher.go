@@ -23,7 +23,7 @@ func main() {
 	// logging.SetLogLevel(logging.LogLevelInfo)
 
 	// Define Topic Subscriptions
-	TOPIC_PREFIX := "solace/samples/go"
+	TOPIC_PREFIX := "solace/samples"
 
 	// Configuration parameters
 	brokerConfig := config.ServicePropertyMap{
@@ -78,7 +78,7 @@ func main() {
 				panic(err)
 			}
 
-			topic := resource.TopicOf(TOPIC_PREFIX + "/direct/publisher/" + strconv.Itoa(msgSeqNum))
+			topic := resource.TopicOf(TOPIC_PREFIX + "go/direct/publisher/" + strconv.Itoa(msgSeqNum))
 
 			// Publish on dynamic topic with dynamic body
 			publishErr := directPublisher.Publish(message, topic)
