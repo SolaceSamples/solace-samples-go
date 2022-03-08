@@ -36,7 +36,7 @@ This directory contains compilable non run-able code.
 ## Supported Environments
 Monitor the Solace Community for updates on supported environments. As of version 1.0.0, the following environments are supported:
 
-- MacOS 64 bit (no support for M1 chip yet)
+- macOS 64 bit (no support for M1 chip yet)
 - Linux with glibc (no support for Alpine)
 - Windows under WSL
 - Any Alpine support with GLIBC
