@@ -27,6 +27,7 @@ func getEnv(key, def string) string {
 func main() {
 	// logging.SetLogLevel(logging.LogLevelInfo)
 
+	TOPIC_PREFIX := "solace/samples"
 	// Configuration parameters
 	brokerConfig := config.ServicePropertyMap{
 		config.TransportLayerPropertyHost:                getEnv("SOLACE_HOST", "tcp://localhost:55555,tcp://localhost:55554"),
@@ -52,11 +53,16 @@ func main() {
 		panic(err)
 	}
 
-	queueName := "sample-queue"
-	durable_exclusive_queue := resource.QueueDurableExclusive(queueName)
+	// queueName := "durable-queue"
+	// durable_exclusive_queue := resource.QueueDurableExclusive(queueName)
+	queueName := "nondurable-queue"
+	non_durable_exclusive_queue := resource.QueueNonDurableExclusive(queueName)
+	topicString := TOPIC_PREFIX + "/nondurable"
+	topic := resource.TopicSubscriptionOf(topicString)
 
 	// Build a Gauranteed message receiver and bind to the given queue
-	persistentReceiver, err := messagingService.CreatePersistentMessageReceiverBuilder().WithMessageAutoAcknowledgement(true).Build(durable_exclusive_queue)
+	// persistentReceiver, err := messagingService.CreatePersistentMessageReceiverBuilder().WithMessageAutoAcknowledgement(true).Build(durable_exclusive_queue)
+	persistentReceiver, err := messagingService.CreatePersistentMessageReceiverBuilder().WithMessageAutoAcknowledgement(true).WithMissingResourceCreationStrategy("CREATE").WithSubscriptions(topic).Build(non_durable_exclusive_queue)
 
 	// Handling a panic from a non existing queue
 	defer func() {
