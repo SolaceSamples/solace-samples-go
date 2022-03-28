@@ -66,7 +66,7 @@ func main() {
 
 	//  Build a Direct Message Receiver
 	directReceiver, err := messagingService.CreateDirectMessageReceiverBuilder().
-		WithSubscriptions(resource.TopicSubscriptionOf(TOPIC_PREFIX + "*/hello/>")).
+		WithSubscriptions(resource.TopicSubscriptionOf(TOPIC_PREFIX + "/*/hello/>")).
 		Build()
 
 	if err != nil {
