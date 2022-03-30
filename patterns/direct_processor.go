@@ -15,7 +15,7 @@ import (
 )
 
 // Message Handler
-func MessageHandler(message message.InboundMessage, publisher solace.DirectMessagePublisher) {
+func MessageHandler(message message.InboundMessage) {
 	var message_body string
 	if payload, ok := message.GetPayloadAsString(); ok {
 		message_body = payload
@@ -55,7 +55,7 @@ func getEnv(key, def string) string {
 
 func main() {
 
-	// Define Topic Subscriptions
+	// Define Topic Prefix
 	TOPIC_PREFIX := "solace/samples"
 
 	// Configuration parameters
@@ -112,9 +112,42 @@ func main() {
 	if startErr != nil {
 		panic(startErr)
 	}
+	messageBuilder := messagingService.MessageBuilder()
+
+	// Message Handler
+	var messageHandler solace.MessageHandler = func(message message.InboundMessage) {
+		var message_body string
+		if payload, ok := message.GetPayloadAsString(); ok {
+			message_body = payload
+		} else if payload, ok := message.GetPayloadAsBytes(); ok {
+			message_body = string(payload)
+		}
+
+		received_topic := message.GetDestinationName()
+		// Generate processed topic
+		slice := strings.Split(received_topic, "/")
+		processed_topic := strings.Join(slice[:len(slice)-1][:], "/") + "/output"
+
+		// Process the message
+		// For example, change the body of the message to uppercased
+		processed_msg := strings.ToUpper(message_body)
+		fmt.Printf("Received a message: %s on topic %s\n", message_body, received_topic)
+		fmt.Printf("Uppercasing to %s and publishing on %s\n\n", processed_msg, processed_topic)
+
+		out_message, err := messageBuilder.BuildWithStringPayload(processed_msg)
+		if err != nil {
+			panic(err)
+		}
+
+		// Publish on dynamic topic with dynamic body
+		publishErr := directPublisher.Publish(out_message, resource.TopicOf(processed_topic))
+		if publishErr != nil {
+			panic(publishErr)
+		}
+	}
 
 	// Register Message callback handler to the Message Receiver
-	if regErr := directReceiver.ReceiveAsync(MessageHandler(directPublisher)); regErr != nil {
+	if regErr := directReceiver.ReceiveAsync(messageHandler); regErr != nil {
 		panic(regErr)
 	}
 
