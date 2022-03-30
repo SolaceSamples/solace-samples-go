@@ -30,10 +30,12 @@ func getEnv(key, def string) string {
 	return def
 }
 
+const TopicPrefix = "solace/samples"
+
 func main() {
 
 	// Define Topic Prefix
-	TOPIC_PREFIX := "solace/samples"
+	TopicPrefix := "solace/samples"
 
 	// Configuration parameters
 	brokerConfig := config.ServicePropertyMap{
@@ -59,7 +61,7 @@ func main() {
 	fmt.Println("Connected to the broker? ", messagingService.IsConnected())
 
 	// Define Topic Subscriptions
-	subscriptionTopic := resource.TopicSubscriptionOf(TOPIC_PREFIX + "/direct/processor/input")
+	subscriptionTopic := resource.TopicSubscriptionOf(TopicPrefix + "/direct/processor/input")
 
 	// Build a Direct message receivers with given topics
 	directReceiver, err := messagingService.CreateDirectMessageReceiverBuilder().
