@@ -14,29 +14,6 @@ import (
 	"solace.dev/go/messaging/pkg/solace/resource"
 )
 
-// Message Handler
-func MessageHandler(message message.InboundMessage) {
-	var message_body string
-	if payload, ok := message.GetPayloadAsString(); ok {
-		message_body = payload
-	} else if payload, ok := message.GetPayloadAsBytes(); ok {
-		message_body = string(payload)
-	}
-
-	received_topic := message.GetDestinationName()
-	// Generate processed topic
-	slice := strings.Split(received_topic, "/")
-	processed_topic := strings.Join(slice[:len(slice)-1][:], "/") + "/output"
-
-	// Process the message
-	// For example, change the body of the message to uppercased
-	processed_msg := strings.ToUpper(message_body)
-	fmt.Printf("Received a message: %s on topic %s\n", message_body, received_topic)
-	fmt.Printf("Uppercasing to %s and publishing on %s", processed_msg, processed_topic)
-
-	// Publish the message here
-}
-
 func ReconnectionHandler(e solace.ServiceEvent) {
 	e.GetTimestamp()
 	e.GetBrokerURI()
