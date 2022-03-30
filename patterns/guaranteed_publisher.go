@@ -39,7 +39,7 @@ func PublishReceiptListener(receipt solace.PublishReceipt) {
 func main() {
 	// logging.SetLogLevel(logging.LogLevelInfo)
 
-	// Define Topic Subscriptions
+	// Define Topic Prefix
 	TOPIC_PREFIX := "solace/samples"
 
 	// Configuration parameters

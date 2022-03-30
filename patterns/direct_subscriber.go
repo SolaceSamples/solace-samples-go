@@ -15,7 +15,16 @@ import (
 
 // Message Handler
 func MessageHandler(message message.InboundMessage) {
-	fmt.Printf("Message Dump %s \n", message)
+	var messageBody string
+
+	if payload, ok := message.GetPayloadAsString(); ok {
+		messageBody = payload
+	} else if payload, ok := message.GetPayloadAsBytes(); ok {
+		messageBody = string(payload)
+	}
+
+	fmt.Printf("Received Message Body %s \n", messageBody)
+	// fmt.Printf("Message Dump %s \n", message)
 }
 
 func ReconnectionHandler(e solace.ServiceEvent) {
@@ -38,7 +47,7 @@ func main() {
 
 	// logging.SetLogLevel(logging.LogLevelInfo)
 
-	// Define Topic Subscriptions
+	// Define Topic Prefix
 	TOPIC_PREFIX := "solace/samples"
 
 	// Configuration parameters

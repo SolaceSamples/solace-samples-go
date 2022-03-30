@@ -14,7 +14,16 @@ import (
 
 // Message Handler
 func MessageHandler(message message.InboundMessage) {
-	fmt.Printf("Message Dump %s \n", message)
+	var messageBody string
+
+	if payload, ok := message.GetPayloadAsString(); ok {
+		messageBody = payload
+	} else if payload, ok := message.GetPayloadAsBytes(); ok {
+		messageBody = string(payload)
+	}
+
+	fmt.Printf("Received Message Body %s \n", messageBody)
+	// fmt.Printf("Message Dump %s \n", message)
 }
 
 func getEnv(key, def string) string {

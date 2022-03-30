@@ -27,7 +27,7 @@ func getEnv(key, def string) string {
 
 func main() {
 
-	// Define Topic Subscriptions
+	// Define Topic Prefix
 	TOPIC_PREFIX := "solace/samples"
 
 	// Configuration parameters
