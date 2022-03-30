@@ -59,14 +59,14 @@ func main() {
 	fmt.Println("Connected to the broker? ", messagingService.IsConnected())
 
 	// Define Topic Subscriptions
-	subscription_topic := resource.TopicSubscriptionOf(TOPIC_PREFIX + "/direct/processor/input")
+	subscriptionTopic := resource.TopicSubscriptionOf(TOPIC_PREFIX + "/direct/processor/input")
 
 	// Build a Direct message receivers with given topics
 	directReceiver, err := messagingService.CreateDirectMessageReceiverBuilder().
-		WithSubscriptions(subscription_topic).
+		WithSubscriptions(subscriptionTopic).
 		Build()
 
-	fmt.Println("Subscribed to: ", subscription_topic.GetName())
+	fmt.Println("Subscribed to: ", subscriptionTopic.GetName())
 
 	if err != nil {
 		panic(err)
@@ -93,31 +93,31 @@ func main() {
 
 	// Message Handler
 	var messageHandler solace.MessageHandler = func(message message.InboundMessage) {
-		var message_body string
+		var messageBody string
 		if payload, ok := message.GetPayloadAsString(); ok {
-			message_body = payload
+			messageBody = payload
 		} else if payload, ok := message.GetPayloadAsBytes(); ok {
-			message_body = string(payload)
+			messageBody = string(payload)
 		}
 
-		received_topic := message.GetDestinationName()
+		receivedTopic := message.GetDestinationName()
 		// Generate processed topic
-		slice := strings.Split(received_topic, "/")
-		processed_topic := strings.Join(slice[:len(slice)-1][:], "/") + "/output"
+		slice := strings.Split(receivedTopic, "/")
+		processedTopic := strings.Join(slice[:len(slice)-1][:], "/") + "/output"
 
 		// Process the message
 		// For example, change the body of the message to uppercased
-		processed_msg := strings.ToUpper(message_body)
-		fmt.Printf("Received a message: %s on topic %s\n", message_body, received_topic)
-		fmt.Printf("Uppercasing to %s and publishing on %s\n\n", processed_msg, processed_topic)
+		processedMsg := strings.ToUpper(messageBody)
+		fmt.Printf("Received a message: %s on topic %s\n", messageBody, receivedTopic)
+		fmt.Printf("Uppercasing to %s and publishing on %s\n\n", processedMsg, processedTopic)
 
-		out_message, err := messageBuilder.BuildWithStringPayload(processed_msg)
+		outMessage, err := messageBuilder.BuildWithStringPayload(processedMsg)
 		if err != nil {
 			panic(err)
 		}
 
 		// Publish on dynamic topic with dynamic body
-		publishErr := directPublisher.Publish(out_message, resource.TopicOf(processed_topic))
+		publishErr := directPublisher.Publish(outMessage, resource.TopicOf(processedTopic))
 		if publishErr != nil {
 			panic(publishErr)
 		}
