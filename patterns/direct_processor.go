@@ -30,12 +30,10 @@ func getEnv(key, def string) string {
 	return def
 }
 
+// Define Topic Prefix
 const TopicPrefix = "solace/samples"
 
 func main() {
-
-	// Define Topic Prefix
-	TopicPrefix := "solace/samples"
 
 	// Configuration parameters
 	brokerConfig := config.ServicePropertyMap{

@@ -43,12 +43,12 @@ func getEnv(key, def string) string {
 	return def
 }
 
+// Define Topic Prefix
+const TopicPrefix = "solace/samples"
+
 func main() {
 
 	// logging.SetLogLevel(logging.LogLevelInfo)
-
-	// Define Topic Prefix
-	TOPIC_PREFIX := "solace/samples"
 
 	// Configuration parameters
 	brokerConfig := config.ServicePropertyMap{
@@ -74,22 +74,22 @@ func main() {
 	fmt.Println("Connected to the broker? ", messagingService.IsConnected())
 
 	// Define Topic Subscriptions
-	topics := [...]string{TOPIC_PREFIX + "/>", TOPIC_PREFIX + "/*/direct/sub"}
-	topics_sup := make([]resource.Subscription, len(topics))
+	topics := [...]string{TopicPrefix + "/>", TopicPrefix + "/*/direct/sub"}
+	topicsSub := make([]resource.Subscription, len(topics))
 
 	// Create topic objects
 	for i, topicString := range topics {
-		topics_sup[i] = resource.TopicSubscriptionOf(topicString)
+		topicsSub[i] = resource.TopicSubscriptionOf(topicString)
 	}
 
 	// Print out list of strings to subscribe to
-	for _, ts := range topics_sup {
+	for _, ts := range topicsSub {
 		fmt.Println("Subscribed to: ", ts.GetName())
 	}
 
 	// Build a Direct message receivers with given topics
 	directReceiver, err := messagingService.CreateDirectMessageReceiverBuilder().
-		WithSubscriptions(topics_sup...).
+		WithSubscriptions(topicsSub...).
 		Build()
 
 	if err != nil {

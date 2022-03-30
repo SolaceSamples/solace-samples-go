@@ -19,11 +19,11 @@ func getEnv(key, def string) string {
 	return def
 }
 
+// Define Topic Prefix
+const TopicPrefix = "solace/samples"
+
 func main() {
 	// logging.SetLogLevel(logging.LogLevelInfo)
-
-	// Define Topic Prefix
-	TOPIC_PREFIX := "solace/samples"
 
 	// Configuration parameters
 	brokerConfig := config.ServicePropertyMap{
@@ -78,7 +78,7 @@ func main() {
 				panic(err)
 			}
 
-			topic := resource.TopicOf(TOPIC_PREFIX + "/go/direct/publisher/" + strconv.Itoa(msgSeqNum))
+			topic := resource.TopicOf(TopicPrefix + "/go/direct/publisher/" + strconv.Itoa(msgSeqNum))
 
 			// Publish on dynamic topic with dynamic body
 			publishErr := directPublisher.Publish(message, topic)

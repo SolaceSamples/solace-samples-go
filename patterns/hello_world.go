@@ -25,10 +25,10 @@ func getEnv(key, def string) string {
 	return def
 }
 
-func main() {
+// Define Topic Prefix
+const TopicPrefix = "solace/samples"
 
-	// Define Topic Prefix
-	TOPIC_PREFIX := "solace/samples"
+func main() {
 
 	// Configuration parameters
 	brokerConfig := config.ServicePropertyMap{
@@ -66,7 +66,7 @@ func main() {
 
 	//  Build a Direct Message Receiver
 	directReceiver, err := messagingService.CreateDirectMessageReceiverBuilder().
-		WithSubscriptions(resource.TopicSubscriptionOf(TOPIC_PREFIX + "/*/hello/>")).
+		WithSubscriptions(resource.TopicSubscriptionOf(TopicPrefix + "/*/hello/>")).
 		Build()
 
 	if err != nil {
@@ -97,7 +97,7 @@ func main() {
 		WithProperty("language", "go")
 
 	go func() {
-		println("Subscribe to topic ", TOPIC_PREFIX+"/>")
+		println("Subscribe to topic ", TopicPrefix+"/>")
 
 		for directPublisher.IsReady() {
 			msgSeqNum++
@@ -105,7 +105,7 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-			publishErr := directPublisher.Publish(message, resource.TopicOf(TOPIC_PREFIX+"/go/hello/"+uniqueName+"/"+strconv.Itoa(msgSeqNum)))
+			publishErr := directPublisher.Publish(message, resource.TopicOf(TopicPrefix+"/go/hello/"+uniqueName+"/"+strconv.Itoa(msgSeqNum)))
 			if publishErr != nil {
 				panic(publishErr)
 			}

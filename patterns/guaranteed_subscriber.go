@@ -33,10 +33,12 @@ func getEnv(key, def string) string {
 	return def
 }
 
+// Define Topic Prefix
+const TopicPrefix = "solace/samples"
+
 func main() {
 	// logging.SetLogLevel(logging.LogLevelInfo)
 
-	TOPIC_PREFIX := "solace/samples"
 	// Configuration parameters
 	brokerConfig := config.ServicePropertyMap{
 		config.TransportLayerPropertyHost:                getEnv("SOLACE_HOST", "tcp://localhost:55555,tcp://localhost:55554"),
@@ -63,15 +65,15 @@ func main() {
 	}
 
 	// queueName := "durable-queue"
-	// durable_exclusive_queue := resource.QueueDurableExclusive(queueName)
+	// durableExclusiveQueue := resource.QueueDurableExclusive(queueName)
 	queueName := "nondurable-queue"
-	non_durable_exclusive_queue := resource.QueueNonDurableExclusive(queueName)
-	topicString := TOPIC_PREFIX + "/nondurable"
+	nonDurableExclusiveQueue := resource.QueueNonDurableExclusive(queueName)
+	topicString := TopicPrefix + "/nondurable"
 	topic := resource.TopicSubscriptionOf(topicString)
 
 	// Build a Gauranteed message receiver and bind to the given queue
-	// persistentReceiver, err := messagingService.CreatePersistentMessageReceiverBuilder().WithMessageAutoAcknowledgement(true).Build(durable_exclusive_queue)
-	persistentReceiver, err := messagingService.CreatePersistentMessageReceiverBuilder().WithMessageAutoAcknowledgement(true).WithMissingResourceCreationStrategy("CREATE").WithSubscriptions(topic).Build(non_durable_exclusive_queue)
+	// persistentReceiver, err := messagingService.CreatePersistentMessageReceiverBuilder().WithMessageAutoAcknowledgement(true).Build(durableExclusiveQueue)
+	persistentReceiver, err := messagingService.CreatePersistentMessageReceiverBuilder().WithMessageAutoAcknowledgement(true).WithMissingResourceCreationStrategy("CREATE").WithSubscriptions(topic).Build(nonDurableExclusiveQueue)
 
 	// Handling a panic from a non existing queue
 	defer func() {

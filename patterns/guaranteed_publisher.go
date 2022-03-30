@@ -36,11 +36,11 @@ func PublishReceiptListener(receipt solace.PublishReceipt) {
 	}
 }
 
+// Define Topic Prefix
+const TopicPrefix = "solace/samples"
+
 func main() {
 	// logging.SetLogLevel(logging.LogLevelInfo)
-
-	// Define Topic Prefix
-	TOPIC_PREFIX := "solace/samples"
 
 	// Configuration parameters
 	brokerConfig := config.ServicePropertyMap{
@@ -89,7 +89,7 @@ func main() {
 		WithProperty("application", "samples").
 		WithProperty("language", "go")
 
-	topic := resource.TopicOf(TOPIC_PREFIX + "/persistent/publisher")
+	topic := resource.TopicOf(TopicPrefix + "/persistent/publisher")
 	fmt.Printf("Publishing on: %s, please ensure queue has matching subscription.\n", topic.GetName())
 
 	// Run forever until an interrupt signal is received
