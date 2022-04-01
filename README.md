@@ -33,7 +33,7 @@ SOLACE_HOST=<host_name> SOLACE_VPN=<vpn_name> SOLACE_USERNAME=<username> SOLACE_
 
 ## Howtos
 
-This directory contains compilable non run-able code.
+This directory contains code that showcases different features of the API
 
 ## Supported Environments
 
@@ -48,4 +48,4 @@ Monitor the Solace Community for updates on supported environments. As of versio
 
 - Solace Developer Portal is at [solace.dev](https://solace.dev).
 - Ask the [Solace Community](https://solace.community) for further discussions and questions.
-- [Solace PubSub+ Messaging API for Go documentation](https://solace.dev/go-api-docs)
+- [Solace PubSub+ Messaging API for Go documentation](https://docs.solace.com/API-Developer-Online-Ref-Documentation/go/)
