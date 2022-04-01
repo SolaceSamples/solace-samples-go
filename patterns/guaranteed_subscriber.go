@@ -72,8 +72,9 @@ func main() {
 	topic := resource.TopicSubscriptionOf(topicString)
 
 	// Build a Gauranteed message receiver and bind to the given queue
-	// persistentReceiver, err := messagingService.CreatePersistentMessageReceiverBuilder().WithMessageAutoAcknowledgement(true).Build(durableExclusiveQueue)
-	persistentReceiver, err := messagingService.CreatePersistentMessageReceiverBuilder().WithMessageAutoAcknowledgement(true).WithMissingResourceCreationStrategy("CREATE").WithSubscriptions(topic).Build(nonDurableExclusiveQueue)
+	// persistentReceiver, err := messagingService.CreatePersistentMessageReceiverBuilder().WithMessageAutoAcknowledgement().Build(durableExclusiveQueue)
+	strategy := config.MissingResourcesCreationStrategy("CREATE_ON_START")
+	persistentReceiver, err := messagingService.CreatePersistentMessageReceiverBuilder().WithMissingResourcesCreationStrategy(strategy).WithSubscriptions(topic).Build(nonDurableExclusiveQueue)
 
 	// Handling a panic from a non existing queue
 	defer func() {
