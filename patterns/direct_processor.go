@@ -135,6 +135,9 @@ func main() {
 		// Terminate the Direct Receiver
 		directReceiver.Terminate(1 * time.Second)
 		fmt.Println("\nDirect Receiver Terminated? ", directReceiver.IsTerminated())
+		// Terminate the Direct Publisher
+		directPublisher.Terminate(1 * time.Second)
+		fmt.Println("\nDirect Publisher Terminated? ", directPublisher.IsTerminated())
 		// Disconnect the Message Service
 		messagingService.Disconnect()
 		fmt.Println("Messaging Service Disconnected? ", !messagingService.IsConnected())

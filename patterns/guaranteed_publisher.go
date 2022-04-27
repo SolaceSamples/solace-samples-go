@@ -22,7 +22,7 @@ func getEnv(key, def string) string {
 
 // Receipt Handler
 func PublishReceiptListener(receipt solace.PublishReceipt) {
-	fmt.Println("Publish Receipt Listener")
+	fmt.Println("Received a Publish Receipt from the broker\n")
 	// fmt.Println("IsPersisted: ", receipt.IsPersisted())
 	// fmt.Println("Message : ", receipt.GetMessage())
 	if receipt.GetError() != nil {

@@ -79,16 +79,16 @@ func main() {
 	// Handling a panic from a non existing queue
 	defer func() {
 		if err := recover(); err != nil {
-			fmt.Printf("Make sure queue name '%s' exists on the broker.\nThe following error occurred when attempting to connect to creat a Persistent Message Receiver:\n%s", queueName, err)
+			fmt.Printf("Make sure queue name '%s' exists on the broker.\nThe following error occurred when attempting to connect to create a Persistent Message Receiver:\n%s", queueName, err)
 		}
 	}()
 
-	// Start Direct Message Receiver
+	// Start Persistent Message Receiver
 	if err := persistentReceiver.Start(); err != nil {
 		panic(err)
 	}
 
-	fmt.Println("Direct Receiver running? ", persistentReceiver.IsRunning())
+	fmt.Println("Persistent Receiver running? ", persistentReceiver.IsRunning())
 
 	// Register Message callback handler to the Message Receiver
 	if regErr := persistentReceiver.ReceiveAsync(MessageHandler); regErr != nil {
@@ -106,9 +106,9 @@ func main() {
 	// Block until a signal is received.
 	<-c
 
-	// Terminate the Direct Receiver
+	// Terminate the Persistent Receiver
 	persistentReceiver.Terminate(1 * time.Second)
-	fmt.Println("\nDirect Receiver Terminated? ", persistentReceiver.IsTerminated())
+	fmt.Println("\nPersistent Receiver Terminated? ", persistentReceiver.IsTerminated())
 	// Disconnect the Message Service
 	messagingService.Disconnect()
 	fmt.Println("Messaging Service Disconnected? ", !messagingService.IsConnected())
