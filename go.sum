@@ -2,3 +2,5 @@ solace.dev/go/messaging v1.0.0 h1:48h2EfIvAPw0T/5+Y8hgOcW3NUHcMRBk6xsxogbtlMA=
 solace.dev/go/messaging v1.0.0/go.mod h1:QKqAKqxKX5v0G9PEuRpe9wBNbEuj/ncbrkqsNArT7L0=
 solace.dev/go/messaging v1.0.1 h1:ZIH1cmPgKJndPVBmEF8iWIR2TSZdsXtR3AdYR076mSU=
 solace.dev/go/messaging v1.0.1/go.mod h1:QKqAKqxKX5v0G9PEuRpe9wBNbEuj/ncbrkqsNArT7L0=
+solace.dev/go/messaging v1.2.0 h1:NSuGmVPBI7/zrr0GzvIocWc2R8zfyRBhoVn3tArTT98=
+solace.dev/go/messaging v1.2.0/go.mod h1:QKqAKqxKX5v0G9PEuRpe9wBNbEuj/ncbrkqsNArT7L0=
