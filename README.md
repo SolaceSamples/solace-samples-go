@@ -1,6 +1,6 @@
 # Solace PubSub+ Messaging API for Go
 
-This repo hosts sample code to showcase how the Solace PubSub+ Go API could be used. You can find:
+This repository contains sample code to showcase how the Solace PubSub+ Go API could be used. You can find:
 
 1. `/patterns` --> runnable code showcasing different message exchange patters with the PubSub+ Go API.
 1. `/howtos` --> code snippets showcasing how to use different features of the API. All howtos are named `how_to_*.go` with some sampler files under sub-folders.
