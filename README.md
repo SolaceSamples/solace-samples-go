@@ -37,12 +37,8 @@ This directory contains code that showcases different features of the API
 
 ## Supported Environments
 
-Monitor the Solace Community for updates on supported environments. As of version 1.0.0, the following environments are supported:
-
-- macOS 64 bit (no support for M1 chip yet)
-- Linux with glibc (no support for Alpine)
-- Windows under WSL
-- Any Alpine support with GLIBC
+- See the list of supported environments here: [Solace Go API - Supported Environments](https://docs.solace.com/API/API-Developer-Guide/Supported-Environments.htm#Go)
+- Monitor the Solace Community for updates on supported environments. 
 
 ## Resources
 
