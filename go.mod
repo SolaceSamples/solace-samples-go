@@ -2,9 +2,9 @@ module SolaceSamples.com/PubSub+Go
 
 go 1.17
 
-require solace.dev/go/messaging v1.4.0
+require solace.dev/go/messaging v1.5.0
 
-require solace.dev/go/messaging/trace/propagation v1.0.0
+require solace.dev/go/messaging-trace/opentelemetry v1.0.0
 
 require (
 	go.opentelemetry.io/otel v1.22.0

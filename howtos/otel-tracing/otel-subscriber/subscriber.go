@@ -21,9 +21,9 @@ import (
 	"solace.dev/go/messaging/pkg/solace/resource"
 
 	// Dependency below is for Solace PubSub+ OTel integration:
-	solpropagation "solace.dev/go/messaging/trace/propagation"
-	"solace.dev/go/messaging/trace/propagation/carrier"
-	sol_otel_logging "solace.dev/go/messaging/trace/propagation/logging"
+	solpropagation "solace.dev/go/messaging-trace/opentelemetry"
+	"solace.dev/go/messaging-trace/opentelemetry/carrier"
+	sol_otel_logging "solace.dev/go/messaging-trace/opentelemetry/logging"
 )
 
 func getEnv(key, def string) string {
