@@ -79,12 +79,11 @@ func main() {
 
 	//  Prepare outbound message payload and body
 	messageConfig := config.MessagePropertyMap{
-		config.MessagePropertyClassOfService:             2,
-		config.MessagePropertySequenceNumber:             15,
-		config.MessagePropertyApplicationMessageID:       "59",
-		config.MessageProperty(config.QueuePartitionKey): "queuePartitionKeyValue",
-		config.MessageProperty("Developer"):              "Oseme",
+		config.MessagePropertyClassOfService:       2,        // Optional property
+		config.MessagePropertyApplicationMessageID: "59",     // Optional property
+		config.MessageProperty("Developer"):        "Solace", // Optional property
 	}
+
 	messageBody := "Hello from Go Request-Reply Publisher Sample"
 	messageBuilder := messagingService.MessageBuilder().
 		FromConfigurationProvider(messageConfig).
