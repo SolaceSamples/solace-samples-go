@@ -107,16 +107,8 @@ func main() {
 				panic(publishErr)
 			}
 
-			// // Publish string message to topic
-			// stringMessage := messageBody + " --> " + strconv.Itoa(msgSeqNum)
-			// publishErr := requestReplyPublisher.PublishString(stringMessage, ReplyMessageHandler, topic, 5*time.Second, nil /* usercontext */)
-			// // Publish large Byte message to topic
-			// largeByteArray := make([]byte, 16384)
-			// publishErr := requestReplyPublisher.PublishBytes(largeByteArray, ReplyMessageHandler, topic, 5*time.Second, nil /* usercontext */)
-
-			// if publishErr != nil {
-			// 	panic(publishErr)
-			// }
+			fmt.Printf("Published message with sequence number: %d on topic: %s\n", msgSeqNum, topic.GetName())
+			// fmt.Printf("Published message: %s\n", message)
 			time.Sleep(1 * time.Second) // wait for a second between published message
 		}
 	}()
