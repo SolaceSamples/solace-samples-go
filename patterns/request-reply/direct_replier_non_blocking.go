@@ -13,7 +13,7 @@ import (
 	"solace.dev/go/messaging/pkg/solace/resource"
 )
 
-// getEnvRPNB function
+// getEnv function
 func getEnv(key, def string) string {
 	if val, ok := os.LookupEnv(key); ok {
 		return val
