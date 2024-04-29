@@ -95,7 +95,7 @@ func main() {
 		panic(regErr)
 	}
 	fmt.Printf("\n Bound to queue: %s\n", queueName)
-	fmt.Println("\n===Interrupt (CTR+C) to handle graceful terminaltion of the subscriber===\n")
+	fmt.Println("\n===Interrupt (CTR+C) to handle graceful termination of the receiver===\n")
 
 	// Run forever until an interrupt signal is received
 	// Handle interrupts

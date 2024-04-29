@@ -100,7 +100,7 @@ func main() {
 				panic(err)
 			}
 			// Publish on dynamic topic with dynamic body
-			// NOTE: publishing to topic, so make sure GuaranteedSubscriber queue is subscribed to same topic,
+			// NOTE: publishing to topic, so make sure GuaranteedReceiver queue is subscribed to same topic,
 			//       or enable "Reject Message to Sender on No Subscription Match" the client-profile
 			publishErr := persistentPublisher.Publish(message, topic, nil, nil)
 			// Block until message is acknowledged

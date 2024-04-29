@@ -165,7 +165,7 @@ func main() {
 		panic(regErr)
 	}
 
-	fmt.Println("\n===Interrupt (CTR+C) to handle graceful terminaltion of the subscriber===\n")
+	fmt.Println("\n===Interrupt (CTR+C) to handle graceful termination of the receiver===\n")
 
 	// cleanup after the main calling function has finished execution
 	defer func() {
