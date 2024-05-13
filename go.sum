@@ -33,3 +33,6 @@ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8
 gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
 gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
+solace.dev/go/messaging v1.6.1 h1:G9d6pJ26gWMfQoSqJAFC3uTBZGzSyFu54uT7GrWqm3A=
+solace.dev/go/messaging v1.6.1/go.mod h1:QKqAKqxKX5v0G9PEuRpe9wBNbEuj/ncbrkqsNArT7L0=
+solace.dev/go/messaging-trace/opentelemetry v1.0.0/go.mod h1:2gaDGc8bvntCrZb1CDU+sRh4TfHOLl4cvbGbAaEmYjg=
