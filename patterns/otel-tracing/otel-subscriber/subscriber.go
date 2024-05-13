@@ -91,7 +91,7 @@ func HowToInjectTraceContextInSolaceMessage(inboundMessage message.InboundMessag
 	// Extract the context from the Inbound message via its carrier instance
 	parentSpanContext := GetReceivedContext(inboundMessageCarrier)
 
-	// Should we add a sample baggage from this subscriber (consumer) ?
+	// Should we add a sample baggage from this receiver (consumer) ?
 	if withBaggage {
 		parentSpanContext = AddBaggageToContext(parentSpanContext)
 	}
@@ -193,7 +193,7 @@ func main() {
 		panic(regErr)
 	}
 
-	fmt.Println("\n===Interrupt (CTR+C) to handle graceful terminaltion of the subscriber===")
+	fmt.Println("\n===Interrupt (CTR+C) to handle graceful termination of the receiver===")
 
 	// Run forever until an interrupt signal is received
 	// Handle interrupts
