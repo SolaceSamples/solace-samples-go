@@ -24,7 +24,7 @@ This repository contains sample code to showcase how the Solace PubSub+ Go API c
 1. [For local development] Unzip the contents of the PubSub+ Go API tar folder into a `pubsubplus-go-client` folder in this directory.
 1. Run the samples. There are two way to run the samples:
    1. `go run`: Navigate to the [patterns](./patterns) directory and execute `go run <name_of_sample>.go`
-   1. `go build`: Navigate to the [patterns](./patterns) directory and execute `go build <name_of_sample>.go -o <name_of_sample>`. This will produce an executable that can be run via `./<name_of_sample>`
+   1. `go build`: Navigate to the [patterns](./patterns) directory and execute `go build -o <name_of_sample>  <name_of_sample>.go`. This will produce an executable that can be run via `./<name_of_sample>`
 1. Note on environment variables: you can pass the hostname, VPN name, username, and password as environment variables before running the samples as follows:
 
 ```
