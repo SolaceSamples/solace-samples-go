@@ -95,36 +95,34 @@ func main() {
 	fmt.Printf("Publishing on: %s, please ensure queue has matching subscription.\n", topic.GetName())
 
 	// Run forever until an interrupt signal is received
-	go func() {
-		for requestReplyPublisher.IsReady() {
-			msgSeqNum++
-			message, err := messageBuilder.BuildWithStringPayload(messageBody + " --> " + strconv.Itoa(msgSeqNum))
-			if err != nil {
-				panic(err)
-			}
-
-			replyTimeout := 5 * time.Second
-
-			// Publish to the given topic
-			publishErr := requestReplyPublisher.Publish(message, ReplyMessageHandler, topic, replyTimeout, config.MessagePropertyMap{
-				config.MessagePropertyCorrelationID: fmt.Sprint(msgSeqNum),
-			}, nil /* usercontext */)
-			// // Publish string message to topic
-			// stringMessage := messageBody + " --> " + strconv.Itoa(msgSeqNum)
-			// publishErr := requestReplyPublisher.PublishString(stringMessage, ReplyMessageHandler, topic, replyTimeout, nil /* usercontext */)
-			// // Publish large Byte message to topic
-			// largeByteArray := make([]byte, 16384)
-			// publishErr := requestReplyPublisher.PublishBytes(largeByteArray, ReplyMessageHandler, topic, replyTimeout, nil /* usercontext */)
-
-			if publishErr != nil {
-				panic(publishErr)
-			}
-
-			fmt.Printf("Published message with sequence number: %d on topic: %s\n", msgSeqNum, topic.GetName())
-			// fmt.Printf("Published message: %s\n", message)
-			time.Sleep(1 * time.Second) // wait for a second between published message
+	for requestReplyPublisher.IsReady() {
+		msgSeqNum++
+		message, err := messageBuilder.BuildWithStringPayload(messageBody + " --> " + strconv.Itoa(msgSeqNum))
+		if err != nil {
+			panic(err)
 		}
-	}()
+
+		replyTimeout := 5 * time.Second
+
+		// Publish to the given topic
+		publishErr := requestReplyPublisher.Publish(message, ReplyMessageHandler, topic, replyTimeout, config.MessagePropertyMap{
+			config.MessagePropertyCorrelationID: fmt.Sprint(msgSeqNum),
+		}, nil /* usercontext */)
+		// // Publish string message to topic
+		// stringMessage := messageBody + " --> " + strconv.Itoa(msgSeqNum)
+		// publishErr := requestReplyPublisher.PublishString(stringMessage, ReplyMessageHandler, topic, replyTimeout, nil /* usercontext */)
+		// // Publish large Byte message to topic
+		// largeByteArray := make([]byte, 16384)
+		// publishErr := requestReplyPublisher.PublishBytes(largeByteArray, ReplyMessageHandler, topic, replyTimeout, nil /* usercontext */)
+
+		if publishErr != nil {
+			panic(publishErr)
+		}
+
+		fmt.Printf("Published message with sequence number: %d on topic: %s\n", msgSeqNum, topic.GetName())
+		// fmt.Printf("Published message: %s\n", message)
+		time.Sleep(1 * time.Second) // wait for a second between published message
+	}
 
 	// Handle OS interrupts
 	c := make(chan os.Signal, 1)

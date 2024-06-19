@@ -78,41 +78,39 @@ func main() {
 	fmt.Printf("Publishing on: %s, please ensure queue has matching subscription.\n", topic.GetName())
 
 	// Run forever until an interrupt signal is received
-	go func() {
-		for requestReplyPublisher.IsReady() {
-			msgSeqNum++
-			message, err := messageBuilder.BuildWithStringPayload(messageBody + " --> " + strconv.Itoa(msgSeqNum))
-			if err != nil {
-				panic(err)
-			}
-
-			fmt.Printf("Publishing message with sequence number: %d on topic: %s\n", msgSeqNum, topic.GetName())
-			// fmt.Printf("Publishing message: %s\n", message)
-
-			// Publish to the given topic
-			// Block until reply message is received
-			replyTimeout := 5 * time.Second
-			messageReply, publishErr := requestReplyPublisher.PublishAwaitResponse(message, topic, replyTimeout, config.MessagePropertyMap{
-				config.MessagePropertyCorrelationID: fmt.Sprint(msgSeqNum),
-			})
-
-			if publishErr == nil { // Good, a reply was received
-				messageReplyPayload, _ := messageReply.GetPayloadAsString()
-				fmt.Printf("The reply inbound payload: %s\n", messageReplyPayload)
-			} else if terr, ok := publishErr.(*solace.TimeoutError); ok { // Not good, a timeout occurred and no reply was received
-				// message should be nil
-				// This handles the situation that the requester application did not receive a reply for the published message within the specified timeout.
-				// This would be a good location for implementing resiliency or retry mechanisms.
-				fmt.Printf("The reply timed out with %s\n", terr)
-			} else { // async error occurred.
-				panic(publishErr)
-			}
-
-			fmt.Printf("Published message with sequence number: %d on topic: %s\n", msgSeqNum, topic.GetName())
-			// fmt.Printf("Published message: %s\n", message)
-			time.Sleep(1 * time.Second) // wait for a second between published message
+	for requestReplyPublisher.IsReady() {
+		msgSeqNum++
+		message, err := messageBuilder.BuildWithStringPayload(messageBody + " --> " + strconv.Itoa(msgSeqNum))
+		if err != nil {
+			panic(err)
 		}
-	}()
+
+		fmt.Printf("Publishing message with sequence number: %d on topic: %s\n", msgSeqNum, topic.GetName())
+		// fmt.Printf("Publishing message: %s\n", message)
+
+		// Publish to the given topic
+		// Block until reply message is received
+		replyTimeout := 5 * time.Second
+		messageReply, publishErr := requestReplyPublisher.PublishAwaitResponse(message, topic, replyTimeout, config.MessagePropertyMap{
+			config.MessagePropertyCorrelationID: fmt.Sprint(msgSeqNum),
+		})
+
+		if publishErr == nil { // Good, a reply was received
+			messageReplyPayload, _ := messageReply.GetPayloadAsString()
+			fmt.Printf("The reply inbound payload: %s\n", messageReplyPayload)
+		} else if terr, ok := publishErr.(*solace.TimeoutError); ok { // Not good, a timeout occurred and no reply was received
+			// message should be nil
+			// This handles the situation that the requester application did not receive a reply for the published message within the specified timeout.
+			// This would be a good location for implementing resiliency or retry mechanisms.
+			fmt.Printf("The reply timed out with %s\n", terr)
+		} else { // async error occurred.
+			panic(publishErr)
+		}
+
+		fmt.Printf("Published message with sequence number: %d on topic: %s\n", msgSeqNum, topic.GetName())
+		// fmt.Printf("Published message: %s\n", message)
+		time.Sleep(1 * time.Second) // wait for a second between published message
+	}
 
 	// Handle OS interrupts
 	c := make(chan os.Signal, 1)

@@ -49,7 +49,7 @@ func main() {
 		panic(err)
 	}
 
-	topicSubscription := resource.TopicSubscriptionOf("solace/samples/go/request-reply")
+	topicSubscription := resource.TopicSubscriptionOf("solace/samples/*/request-reply")
 
 	//  Build a Request-Reply Message Receiver
 	requestReplyReceiver, builderErr := messagingService.

@@ -47,7 +47,7 @@ func main() {
 		panic(err)
 	}
 
-	topicSubscription := resource.TopicSubscriptionOf("solace/samples/go/request-reply")
+	topicSubscription := resource.TopicSubscriptionOf("solace/samples/*/request-reply")
 
 	//  Build a Request-Reply Message Receiver
 	requestReplyReceiver, builderErr := messagingService.
@@ -72,67 +72,54 @@ func main() {
 
 	// have receiver push request messages to request message handler
 	// Run in a seperate Go routine
-	go func() {
-		var receivedMsgCounter = 0 // counter for the received messages
+	var receivedMsgCounter = 0 // counter for the received messages
 
-		// Run forever until an interrupt signal is received
-		for requestReplyReceiver.IsRunning() {
-			// have receiver push request messages to request message handler
-			message, replier, regErr := requestReplyReceiver.ReceiveMessage(-1)
-			if regErr != nil {
-				panic(regErr)
+	// Run forever until an interrupt signal is received
+	for requestReplyReceiver.IsRunning() {
+		// have receiver push request messages to request message handler
+		message, replier, regErr := requestReplyReceiver.ReceiveMessage(-1)
+		if regErr != nil {
+			panic(regErr)
+		}
+
+		receivedMsgCounter++
+		fmt.Printf("Received message: %d\n", receivedMsgCounter)
+
+		var messageBody string
+
+		if payload, ok := message.GetPayloadAsString(); ok {
+			messageBody = payload
+		} else if payload, ok := message.GetPayloadAsBytes(); ok {
+			messageBody = string(payload)
+		}
+
+		fmt.Printf("Received Request Message Body %s \n", messageBody)
+		// fmt.Printf("Request Message Dump %s \n", message)
+
+		//  Prepare outbound message payload and body
+		replyMessageBody := "Hello from Go Request-Reply Receiver Replier Sample"
+		messageBuilder := messagingService.MessageBuilder().
+			WithProperty("application", "samples").
+			WithProperty("language", "go")
+
+		if replier == nil { // the replier is only set when received message is request message that has to be replied to
+			// messages received on the topic subscription without a repliable destination will return a nil replier
+			fmt.Printf("Received message: %d on topic %s that was not a request message\n", receivedMsgCounter, topicSubscription.GetName())
+		} else {
+			// build reply message
+			replyMsg, replyMsgBuildErr := messageBuilder.BuildWithStringPayload(replyMessageBody + "\nReply from: " + messageBody)
+			if replyMsgBuildErr != nil {
+				panic(replyMsgBuildErr)
 			}
-
-			receivedMsgCounter++
-			fmt.Printf("Received message: %d\n", receivedMsgCounter)
-
-			var messageBody string
-
-			if payload, ok := message.GetPayloadAsString(); ok {
-				messageBody = payload
-			} else if payload, ok := message.GetPayloadAsBytes(); ok {
-				messageBody = string(payload)
-			}
-
-			fmt.Printf("Received Request Message Body %s \n", messageBody)
-			// fmt.Printf("Request Message Dump %s \n", message)
-
-			//  Prepare outbound message payload and body
-			replyMessageBody := "Hello from Go Request-Reply Receiver Replier Sample"
-			messageBuilder := messagingService.MessageBuilder().
-				WithProperty("application", "samples").
-				WithProperty("language", "go")
-
-			if replier == nil { // the replier is only set when received message is request message that has to be replied to
-				// messages received on the topic subscription without a repliable destination will return a nil replier
-				fmt.Printf("Received message: %d on topic %s that was not a request message\n", receivedMsgCounter, topicSubscription.GetName())
-			} else {
-				// build reply message
-				replyMsg, replyMsgBuildErr := messageBuilder.BuildWithStringPayload(replyMessageBody + "\nReply from: " + messageBody)
-				if replyMsgBuildErr != nil {
-					panic(replyMsgBuildErr)
-				}
-				// send reply msg
-				// note replier are unique to inbound message provided on the callback with the replier
-				replyErr := replier.Reply(replyMsg)
-				if replyErr != nil {
-					// sending a reply msg can fail if there is a network or connectivity issue
-					fmt.Println("Got error on send reply, is there a network issue? Error: ", replyErr)
-				}
+			// send reply msg
+			// note replier are unique to inbound message provided on the callback with the replier
+			replyErr := replier.Reply(replyMsg)
+			if replyErr != nil {
+				// sending a reply msg can fail if there is a network or connectivity issue
+				fmt.Println("Got error on send reply, is there a network issue? Error: ", replyErr)
 			}
 		}
-	}()
-
-	// cleanup after the main calling function has finished execution
-	defer func() {
-		// Terminate the Request-Reply Receiver
-		requestReplyReceiver.Terminate(1 * time.Second)
-		fmt.Println("\nRequest-Reply Receiver Terminated? ", requestReplyReceiver.IsTerminated())
-
-		// Disconnect the Message Service
-		messagingService.Disconnect()
-		fmt.Println("Messaging Service Disconnected? ", !messagingService.IsConnected())
-	}()
+	}
 
 	// Run forever until an interrupt signal is received
 	// Handle interrupts
@@ -141,4 +128,12 @@ func main() {
 
 	// Block until a signal is received.
 	<-c
+
+	// Terminate the Request-Reply Receiver
+	requestReplyReceiver.Terminate(1 * time.Second)
+	fmt.Println("\nRequest-Reply Receiver Terminated? ", requestReplyReceiver.IsTerminated())
+
+	// Disconnect the Message Service
+	messagingService.Disconnect()
+	fmt.Println("Messaging Service Disconnected? ", !messagingService.IsConnected())
 }
