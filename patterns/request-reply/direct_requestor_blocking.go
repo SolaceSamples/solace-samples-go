@@ -74,7 +74,7 @@ func main() {
 		WithProperty("application", "samples").
 		WithProperty("language", "go")
 
-	topic := resource.TopicOf("solace/samples/go/request-reply")
+	topic := resource.TopicOf("solace/samples/go/direct/request")
 	fmt.Printf("Publishing on: %s, please ensure queue has matching subscription.\n", topic.GetName())
 
 	// Run forever until an interrupt signal is received
@@ -102,7 +102,7 @@ func main() {
 			// message should be nil
 			// This handles the situation that the requester application did not receive a reply for the published message within the specified timeout.
 			// This would be a good location for implementing resiliency or retry mechanisms.
-			fmt.Printf("The reply timed out with %s\n", terr)
+			fmt.Printf("The reply timed out. Error: \" %s\"\n", terr)
 		} else { // async error occurred.
 			panic(publishErr)
 		}

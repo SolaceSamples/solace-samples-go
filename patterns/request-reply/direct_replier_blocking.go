@@ -47,7 +47,7 @@ func main() {
 		panic(err)
 	}
 
-	topicSubscription := resource.TopicSubscriptionOf("solace/samples/*/request-reply")
+	topicSubscription := resource.TopicSubscriptionOf("solace/samples/*/direct/request")
 
 	//  Build a Request-Reply Message Receiver
 	requestReplyReceiver, builderErr := messagingService.
