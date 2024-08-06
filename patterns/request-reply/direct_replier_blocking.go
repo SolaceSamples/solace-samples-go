@@ -76,7 +76,9 @@ func main() {
 
 	// Run forever until an interrupt signal is received
 	for requestReplyReceiver.IsRunning() {
-		// have receiver push request messages to request message handler
+		// The ReceiveMessage() function waits until the specified timeout to receive a message or waits
+		// forever if timeout value is negative. If a timeout occurs, a solace.TimeoutError is returned.
+		// Reference: https://pkg.go.dev/solace.dev/go/messaging@v1.6.1/pkg/solace#RequestReplyMessageReceiver
 		message, replier, regErr := requestReplyReceiver.ReceiveMessage(-1)
 		if regErr != nil {
 			panic(regErr)
