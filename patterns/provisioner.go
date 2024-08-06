@@ -21,12 +21,12 @@ func getEnv(key, def string) string {
 // Code examples of how to use the Endpoint Provisioner to Provision
 // queues on a Solace broker and Deprovision queues from a Solace broker.
 //
-// Provision Returns these type of errors:
-// [x] Already Exists - this is returned when a queue with the same properties already exists on the broker
-// [x] Endpoint Property Mismatch - this error is returned when a queue with the same name but different provision properties already exists on the broker
+// Possible Provision errors include:
+// [x] Already Exists - when a queue with the same properties already exists on the broker
+// [x] Endpoint Property Mismatch - when a queue with the same name but different provision properties already exists on the broker
 //
-// Deprovision Returns these errors:
-// [x] Unknown Queue - when a queue with the provided queue name do not exists on the broker
+// Possible Deprovision errors include:
+// [x] Unknown Queue - when a queue with the provided queue name does not exists on the broker
 func main() {
 	// logging.SetLogLevel(logging.LogLevelInfo)
 
