@@ -72,8 +72,7 @@ func main() {
 		Provision(queueName, false)
 
 	fmt.Println("\nEndpoint Provision on the broker [Status]: ", outcome.GetStatus())
-	fmt.Println("Endpoint Provision on the broker [Error]: ", outcome.GetError())
-	fmt.Println("Endpoint Provision on the broker [EndpointProperties]: ", outcome.GetEndpointProperties(), "\n")
+	fmt.Println("Endpoint Provision on the broker [Error]: ", outcome.GetError(), "\n")
 	//// End Provision with blocking Example
 
 	// //// Start ProvisionAsync Example
@@ -91,16 +90,14 @@ func main() {
 
 	// outcome := <-outcomeChannel
 	// fmt.Println("\nEndpoint Provision Aysnc on the broker [Status]: ", outcome.GetStatus())
-	// fmt.Println("Endpoint Provision Aysnc on the broker [Error]: ", outcome.GetError())
-	// fmt.Println("Endpoint Provision Aysnc on the broker [EndpointProperties]: ", outcome.GetEndpointProperties(), "\n")
+	// fmt.Println("Endpoint Provision Aysnc on the broker [Error]: ", outcome.GetError(), "\n")
 	// //// End ProvisionAsync Example
 
 	// //// Start ProvisionAsync with callback Example
 	// queueName := "ProvisionedQueueName"
 	// provisionCallbackHandler := func(outcome solace.ProvisionOutcome) {
 	// 	fmt.Println("\nEndpoint Provision Aysnc With Callback on the broker [Status]: ", outcome.GetStatus())
-	// 	fmt.Println("Endpoint Provision Aysnc With Callback on the broker [Error]: ", outcome.GetError())
-	// 	fmt.Println("Endpoint Provision Aysnc With Callback on the broker [EndpointProperties]: ", outcome.GetEndpointProperties(), "\n")
+	// 	fmt.Println("Endpoint Provision Aysnc With Callback on the broker [Error]: ", outcome.GetError(), "\n")
 	// }
 	// messagingService.EndpointProvisioner().
 	// 	WithDurability(true).                            // provision a durable queue (this is Default to True irresspective of whether this setter is called)
