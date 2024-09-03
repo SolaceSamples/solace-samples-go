@@ -65,16 +65,19 @@ func main() {
 	}
 
 	// queueName := "durable-queue"
-	// durableExclusiveQueue := resource.QueueDurableExclusive(queueName)
+	// durableExclusiveQueue := resource.QueueDurableExclusive("durable-queue")
 	queueName := "nondurable-queue"
-	nonDurableExclusiveQueue := resource.QueueNonDurableExclusive(queueName)
+	nonDurableExclusiveQueue := resource.QueueNonDurableExclusive("nondurable-queue")
 	topicString := TopicPrefix + "/nondurable"
 	topic := resource.TopicSubscriptionOf(topicString)
 
 	// Build a Gauranteed message receiver and bind to the given queue
-	// persistentReceiver, err := messagingService.CreatePersistentMessageReceiverBuilder().WithMessageAutoAcknowledgement().Build(durableExclusiveQueue)
 	strategy := config.MissingResourcesCreationStrategy("CREATE_ON_START")
-	persistentReceiver, err := messagingService.CreatePersistentMessageReceiverBuilder().WithMissingResourcesCreationStrategy(strategy).WithSubscriptions(topic).Build(nonDurableExclusiveQueue)
+	// Durable Queue
+	persistentReceiver, err := messagingService.CreatePersistentMessageReceiverBuilder().WithMessageAutoAcknowledgement().WithMissingResourcesCreationStrategy(strategy).WithSubscriptions(topic).Build(durableExclusiveQueue)
+
+	// Non-durable Queue
+	// persistentReceiver, err := messagingService.CreatePersistentMessageReceiverBuilder().WithMissingResourcesCreationStrategy(strategy).WithSubscriptions(topic).Build(nonDurableExclusiveQueue)
 
 	// Handling a panic from a non existing queue
 	defer func() {
