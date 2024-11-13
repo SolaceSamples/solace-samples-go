@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"solace.dev/go/messaging"
+	"solace.dev/go/messaging/pkg/solace"
 	"solace.dev/go/messaging/pkg/solace/config"
 	"solace.dev/go/messaging/pkg/solace/message"
 	"solace.dev/go/messaging/pkg/solace/resource"
@@ -17,6 +18,113 @@ func getEnv(key, def string) string {
 		return val
 	}
 	return def
+}
+
+// BuildNackPersistentMessageReceiverWithBuilderMethod - example of how to build a Gauranteed message receiver
+// with NACK support and bind to the given queue and set the required message settlement outcome(s) on the
+// flow using the WithRequiredMessageOutcomeSupport() builder method
+func BuildNackPersistentMessageReceiverWithBuilderMethod(messagingService solace.MessagingService, durableExclusiveQueue *resource.Queue) (receiver solace.PersistentMessageReceiver, err error) {
+	// Build a Gauranteed message receiver with NACK support and bind to the given queue
+	return messagingService.CreatePersistentMessageReceiverBuilder().
+		WithMessageClientAcknowledgement().
+		// Add message settlement outcomes support on the created Flow here (Failed and Reject for NACK(ing) messages)
+		WithRequiredMessageOutcomeSupport(config.PersistentReceiverFailedOutcome, config.PersistentReceiverRejectedOutcome).
+		Build(durableExclusiveQueue)
+}
+
+// BuildNackPersistentMessageReceiverWithConfigurationProvider - example of how to build a Gauranteed message receiver
+// with NACK support and bind to the given queue and set the required message settlement outcome(s) on the
+// flow using the configuration provider
+func BuildNackPersistentMessageReceiverWithConfigurationProvider(messagingService solace.MessagingService, durableExclusiveQueue *resource.Queue) (receiver solace.PersistentMessageReceiver, err error) {
+	// Build a Gauranteed message receiver with NACK support and bind to the given queue
+	return messagingService.CreatePersistentMessageReceiverBuilder().
+		WithMessageClientAcknowledgement().
+		// Add message settlement outcomes support on the created Flow here (Failed and Reject for NACK(ing) messages)
+		FromConfigurationProvider(config.ReceiverPropertyMap{
+			config.ReceiverPropertyPersistentMessageRequiredOutcomeSupport: fmt.Sprintf("%s,%s", config.PersistentReceiverFailedOutcome, config.PersistentReceiverRejectedOutcome),
+		}).
+		Build(durableExclusiveQueue)
+}
+
+// HandleMessageSettlementWithAcceptedOutcome - example of how to set up the persistent receive to
+// settle messages with the ACCEPTED message settlement outcome
+func HandleMessageSettlementWithAcceptedOutcome(persistentReceiver solace.PersistentMessageReceiver) {
+	// Message Handler
+	messageHandler := func(message message.InboundMessage) {
+		var messageBody string
+
+		if payload, ok := message.GetPayloadAsString(); ok {
+			messageBody = payload
+		} else if payload, ok := message.GetPayloadAsBytes(); ok {
+			messageBody = string(payload)
+		}
+
+		fmt.Printf("Received Message Body %s \n", messageBody)
+		// fmt.Printf("Message Dump %s \n", message)
+
+		// Settle the message here with one of the three supported settlement outcomes: ACCEPTED, FAILED and REJECTED
+		messageSettlementError := persistentReceiver.Settle(message, config.PersistentReceiverAcceptedOutcome) // Accept(acknowlegde) the message
+		fmt.Println("Message Settlement Error: ", messageSettlementError)
+	}
+
+	// Register Message callback handler to the Message Receiver
+	if regErr := persistentReceiver.ReceiveAsync(messageHandler); regErr != nil {
+		panic(regErr)
+	}
+}
+
+// HandleMessageSettlementWithFailedOutcome - example of how to set up the persistent receive to
+// settle messages with the FAILED message settlement outcome
+func HandleMessageSettlementWithFailedOutcome(persistentReceiver solace.PersistentMessageReceiver) {
+	// Message Handler
+	messageHandler := func(message message.InboundMessage) {
+		var messageBody string
+
+		if payload, ok := message.GetPayloadAsString(); ok {
+			messageBody = payload
+		} else if payload, ok := message.GetPayloadAsBytes(); ok {
+			messageBody = string(payload)
+		}
+
+		fmt.Printf("Received Message Body %s \n", messageBody)
+		// fmt.Printf("Message Dump %s \n", message)
+
+		// Settle the message here with one of the three supported settlement outcomes: ACCEPTED, FAILED and REJECTED
+		messageSettlementError := persistentReceiver.Settle(message, config.PersistentReceiverFailedOutcome) // fail the message
+		fmt.Println("Message Settlement Error: ", messageSettlementError)
+	}
+
+	// Register Message callback handler to the Message Receiver
+	if regErr := persistentReceiver.ReceiveAsync(messageHandler); regErr != nil {
+		panic(regErr)
+	}
+}
+
+// HandleMessageSettlementWithRejectedOutcome - example of how to set up the persistent receive to
+// settle messages with the REJECTED message settlement outcome
+func HandleMessageSettlementWithRejectedOutcome(persistentReceiver solace.PersistentMessageReceiver) {
+	// Message Handler
+	messageHandler := func(message message.InboundMessage) {
+		var messageBody string
+
+		if payload, ok := message.GetPayloadAsString(); ok {
+			messageBody = payload
+		} else if payload, ok := message.GetPayloadAsBytes(); ok {
+			messageBody = string(payload)
+		}
+
+		fmt.Printf("Received Message Body %s \n", messageBody)
+		// fmt.Printf("Message Dump %s \n", message)
+
+		// Settle the message here with one of the three supported settlement outcomes: ACCEPTED, FAILED and REJECTED
+		messageSettlementError := persistentReceiver.Settle(message, config.PersistentReceiverRejectedOutcome) // reject the message
+		fmt.Println("Message Settlement Error: ", messageSettlementError)
+	}
+
+	// Register Message callback handler to the Message Receiver
+	if regErr := persistentReceiver.ReceiveAsync(messageHandler); regErr != nil {
+		panic(regErr)
+	}
 }
 
 func main() {
@@ -51,22 +159,11 @@ func main() {
 	durableExclusiveQueue := resource.QueueDurableExclusive(queueName)
 
 	// Build a Gauranteed message receiver with NACK support and bind to the given queue
-	// Set the required message settlement outcome(s) on the flow using the WithRequiredMessageOutcomeSupport() builder method
-	persistentReceiver, err := messagingService.CreatePersistentMessageReceiverBuilder().
-		WithMessageClientAcknowledgement().
-		// Add message settlement outcomes support on the created Flow here (Failed and Reject for NACK(ing) messages)
-		WithRequiredMessageOutcomeSupport(config.PersistentReceiverFailedOutcome, config.PersistentReceiverRejectedOutcome).
-		Build(durableExclusiveQueue)
-
-	// // Build a Gauranteed message receiver with NACK support and bind to the given queue
-	// // Set the required message settlement outcome(s) on the flow using the configuration provider
-	// persistentReceiver, err := messagingService.CreatePersistentMessageReceiverBuilder().
-	// 	WithMessageClientAcknowledgement().
-	// 	// Add message settlement outcomes support on the created Flow here (Failed and Reject for NACK(ing) messages)
-	// 	FromConfigurationProvider(config.ReceiverPropertyMap{
-	// 		config.ReceiverPropertyPersistentMessageRequiredOutcomeSupport: fmt.Sprintf("%s,%s",config.PersistentReceiverFailedOutcome, config.PersistentReceiverRejectedOutcome),
-	// 	}).
-	// 	Build(durableExclusiveQueue)
+	// Set the required message settlement outcome(s) on the flow using the WithRequiredMessageOutcomeSupport() builder method.
+	// Code example for ways to configure the required message settlement outcomes on the persistent receiver flow:
+	// 	-	using the WithRequiredMessageOutcomeSupport() builder method => BuildNackPersistentMessageReceiverWithBuilderMethod(messagingService, durableExclusiveQueue)
+	// 	-	using the configuration provider => BuildNackPersistentMessageReceiverWithConfigurationProvider(messagingService, durableExclusiveQueue)
+	persistentReceiver, err := BuildNackPersistentMessageReceiverWithBuilderMethod(messagingService, durableExclusiveQueue)
 
 	// Handling a panic from a non existing queue
 	defer func() {
@@ -82,30 +179,12 @@ func main() {
 
 	fmt.Println("Persistent Receiver running? ", persistentReceiver.IsRunning())
 
-	// Message Handler
-	messageHandler := func(message message.InboundMessage) {
-		var messageBody string
+	// Example snippet on how to settle a message with the ACCEPTED outcome
+	// Code example for other message settlement outcomes are implemented in these functions:
+	// 	-	FAILED Outcome 		=> HandleMessageSettlementWithFailedOutcome(persistentReceiver)
+	// 	-	REJECTED Outcome 	=> HandleMessageSettlementWithRejectedOutcome(persistentReceiver)
+	HandleMessageSettlementWithAcceptedOutcome(persistentReceiver)
 
-		if payload, ok := message.GetPayloadAsString(); ok {
-			messageBody = payload
-		} else if payload, ok := message.GetPayloadAsBytes(); ok {
-			messageBody = string(payload)
-		}
-
-		fmt.Printf("Received Message Body %s \n", messageBody)
-		// fmt.Printf("Message Dump %s \n", message)
-
-		// Settle the message here with one of the three supported settlement outcomes: ACCEPTED, FAILED and REJECTED
-		messageSettlementError := persistentReceiver.Settle(message, config.PersistentReceiverAcceptedOutcome) // Accept(acknowlegde) the message
-		// messageSettlementError := persistentReceiver.Settle(message, config.PersistentReceiverFailedOutcome) // fail the message
-		// messageSettlementError := persistentReceiver.Settle(message, config.PersistentReceiverRejectedOutcome) // reject the message
-		fmt.Println("Message Settlement Error: ", messageSettlementError)
-	}
-
-	// Register Message callback handler to the Message Receiver
-	if regErr := persistentReceiver.ReceiveAsync(messageHandler); regErr != nil {
-		panic(regErr)
-	}
 	fmt.Printf("\n Bound to queue: %s\n", queueName)
 	fmt.Println("\n===Interrupt (CTR+C) to handle graceful termination of the receiver===\n")
 
@@ -119,6 +198,7 @@ func main() {
 	<-c
 
 	// Terminate the Persistent Receiver
+	// Graceful shutdown/termination of the persistent receiver is attempted within the specified grace period of one second
 	persistentReceiver.Terminate(1 * time.Second)
 	fmt.Println("\nPersistent Receiver Terminated? ", persistentReceiver.IsTerminated())
 	// Disconnect the Message Service
