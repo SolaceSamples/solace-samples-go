@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"os/signal"
 	"time"
 
 	"solace.dev/go/messaging"
@@ -137,14 +136,6 @@ func main() {
 	// //// End DeprovisionAsync with callback Example
 
 	fmt.Println("\n===Interrupt (CTR+C) to handle graceful terminaltion of the messaiging service===")
-
-	// Run forever until an interrupt signal is received
-	// Handle interrupts
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-
-	// Block until a signal is received.
-	<-c
 
 	// Disconnect the Message Service
 	messagingService.Disconnect()
