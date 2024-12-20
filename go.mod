@@ -2,7 +2,7 @@ module SolaceSamples.com/PubSub+Go
 
 go 1.17
 
-require solace.dev/go/messaging v1.7.0
+require solace.dev/go/messaging v1.8.0
 
 require solace.dev/go/messaging-trace/opentelemetry v1.0.0
 
