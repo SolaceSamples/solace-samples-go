@@ -91,6 +91,9 @@ func main() {
 		// Publish to the given topic
 		// Block until reply message is received
 		replyTimeout := 5 * time.Second
+		// The PublishAwaitResponse() function waits until the specified replyTimeout to receive a published message's reply or waits
+		// indefinitely if replyTimeout value is negative.
+		// Reference: https://pkg.go.dev/solace.dev/go/messaging@v1.6.1/pkg/solace#RequestReplyMessagePublisher
 		messageReply, publishErr := requestReplyPublisher.PublishAwaitResponse(message, topic, replyTimeout, config.MessagePropertyMap{
 			config.MessagePropertyCorrelationID: fmt.Sprint(msgSeqNum),
 		})
