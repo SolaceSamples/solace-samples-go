@@ -83,14 +83,15 @@ func HowToGetCacheRequestConfiguration(cacheRequestStrategy resource.CachedMessa
 	return cacheRequestConfig
 }
 
-// Message Handler
+// CacheResponseCallback - this is the callback to handle the cache response
+// (used by the directReceiver.RequestCachedAsyncWithCallback())
 func CacheResponseCallback(cacheResponse solace.CacheResponse) {
 	// do something with the cache response
 	// ...
 	// ...
 
 	// dump the cache response here
-	// How to check the cache request ID of a message
+	// How to correlate the cache request ID of a request with a received message and response
 	fmt.Printf("Received Cache Response; CacheRequestID %s\n", cacheResponse.GetCacheRequestID())
 
 	// How to check the CacheRequestOutcome of a cache response
@@ -100,9 +101,9 @@ func CacheResponseCallback(cacheResponse solace.CacheResponse) {
 	fmt.Printf("Received Cache Response; Error %s\n", cacheResponse.GetError())
 }
 
-// HowToSendCacheRequestWithCallback - example of send the cache request and retrieve the cache response using a callback
-func HowToSendCacheRequestWithCallback(directReceiver solace.DirectMessageReceiver, cacheRequestConfig resource.CachedMessageSubscriptionRequest) {
-	// the cache request ID
+// HowToSendCacheRequestAndProcessCacheResponseWithCallback - example of send the cache request and retrieve the cache response using a callback
+func HowToSendCacheRequestAndProcessCacheResponseWithCallback(directReceiver solace.DirectMessageReceiver, cacheRequestConfig resource.CachedMessageSubscriptionRequest) {
+	// submit a cache request with a specific cache request ID (in this case we use 1)
 	cacheRequestID := message.CacheRequestID(1)
 
 	// call the method on the direct receiver to send the cache request and retrieve the cache response using a callback
@@ -116,9 +117,9 @@ func HowToSendCacheRequestWithCallback(directReceiver solace.DirectMessageReceiv
 	// ...
 }
 
-// HowToSendCacheRequestWithChannel - example of how to send the cache request and retrieve the cache response on a channel
-func HowToSendCacheRequestWithChannel(directReceiver solace.DirectMessageReceiver, cacheRequestConfig resource.CachedMessageSubscriptionRequest) {
-	// the cache request ID
+// HowToSendCacheRequestAndProcessCacheResponseWithChannel - example of how to send the cache request and retrieve the cache response on a channel
+func HowToSendCacheRequestAndProcessCacheResponseWithChannel(directReceiver solace.DirectMessageReceiver, cacheRequestConfig resource.CachedMessageSubscriptionRequest) {
+	// submit a cache request with a specific cache request ID (in this case we use 1)
 	cacheRequestID := message.CacheRequestID(1)
 
 	// call the method on the direct receiver to send the cache request and retrieve the cache response on a channel
@@ -137,7 +138,7 @@ func HowToSendCacheRequestWithChannel(directReceiver solace.DirectMessageReceive
 		// ...
 
 		// dump the cache response here
-		// How to check the cache request ID of a message
+		// How to correlate the cache request ID of a request with a received message and response
 		fmt.Printf("Received Cache Response; CacheRequestID %s\n", cacheResponse.GetCacheRequestID())
 
 		// How to check the CacheRequestOutcome of a cache response
@@ -215,18 +216,28 @@ func main() {
 	// var cachedMessageSubscriptionRequest resource.CachedMessageSubscriptionRequest = HowToGetCacheRequestConfiguration(resource.CacheRequestStrategyLiveCancelsCached)
 
 	// Send the cache request and retrieve the cache response using a callback
-	HowToSendCacheRequestWithCallback(directReceiver, cachedMessageSubscriptionRequest)
+	HowToSendCacheRequestAndProcessCacheResponseWithCallback(directReceiver, cachedMessageSubscriptionRequest)
 
 	// Send the cache request and retrieve the cache response using a callback
-	HowToSendCacheRequestWithChannel(directReceiver, cachedMessageSubscriptionRequest)
+	HowToSendCacheRequestAndProcessCacheResponseWithChannel(directReceiver, cachedMessageSubscriptionRequest)
 
 	fmt.Println("\n===Interrupt (CTR+C) to handle graceful terminaltion of the messaiging service===")
 
 	// cleanup after the main calling function has finished execution
 	defer func() {
+		// A graceful shutdown of the directReceiver is attempted within the specified
+		// grace period (in this case, we are using 1 second).
+		var gracePeriod time.Duration = 1 * time.Second
+
 		// Terminate the Direct Receiver
-		directReceiver.Terminate(1 * time.Second)
+		// The receiver can be terminated before the cache response has been completed,
+		// but this is not possible to demonstrate in this HowTo due to infrastructure limitations.
+		// Setting gracePeriod to 0 implies a non-graceful shutdown that ignores unfinished tasks or in-flight messages.
+		// This function returns an error if one occurred, or nil if it successfully and gracefully terminated.
+		// If gracePeriod is set to less than 0, the function waits indefinitely.
+		directReceiver.Terminate(gracePeriod)
 		fmt.Println("\nDirect Receiver Terminated? ", directReceiver.IsTerminated())
+
 		// Disconnect the Message Service
 		messagingService.Disconnect()
 		fmt.Println("Messaging Service Disconnected? ", !messagingService.IsConnected())
