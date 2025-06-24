@@ -37,7 +37,7 @@ This directory contains code that showcases different features of the API
 
 ## Supported Environments
 
-- See the list of supported environments here: [Solace Go API - Supported Environments](https://docs.solace.com/API/API-Developer-Guide/Supported-Environments.htm#Go)
+- See the list of supported environments here: [Solace Go API - Supported Environments](https://docs.solace.com/API/API-Developer-Guide-Go/Go-API-supported-Environments.htm)
 - Monitor the Solace Community for updates on supported environments. 
 
 ## Resources
