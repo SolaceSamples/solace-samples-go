@@ -12,6 +12,8 @@ This repository contains sample code to showcase how the Solace PubSub+ Go API c
    1. run `go get solace.dev/go/messaging`
    1. Downloading the API archive from the [Solace Community](https://solace.community/group/4-solace-early-access-golang-api)
    1. Clone the source code into the root of this repo
+1. Make sure you have CGO, gcc, and stdlib headers installed
+   1. e.g. on Ubuntu systems you can execute `apt install -y gcc libc6-dev`
 
 ## Run Patterns
 
