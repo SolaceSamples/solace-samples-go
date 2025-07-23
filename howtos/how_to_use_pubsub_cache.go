@@ -42,9 +42,9 @@ func HowToGetCacheRequestConfiguration(cacheRequestStrategy resource.CachedMessa
 			resource.CacheRequestStrategyAsAvailable,
 			cacheName,
 			resource.TopicSubscriptionOf(topic),
-			ValidCacheAccessTimeout, // specific cache access timeout
-			ValidMaxCachedMessages,  // specific max cached messages
-			ValidCachedMessageAge,   // specific max cached message age
+			ValidCacheAccessTimeout, // specify cache access timeout
+			ValidMaxCachedMessages,  // specify max cached messages
+			ValidCachedMessageAge,   // specify max cached message age
 		)
 		// For cache request with strategy CachedFirst
 	case resource.CacheRequestStrategyCachedFirst:
