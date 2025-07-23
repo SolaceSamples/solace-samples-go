@@ -184,7 +184,7 @@ func main() {
 
 	// Build a Direct message receivers with given topics
 	directReceiver, err := messagingService.CreateDirectMessageReceiverBuilder().
-		// we are using an abitary value for back pressure (you can configure this based on your use case)
+		// we are using an arbitrary value for back pressure (you can configure this based on your use case)
 		OnBackPressureDropOldest(100100).
 		Build()
 
