@@ -175,7 +175,7 @@ func main() {
 		panic(err)
 	}
 
-	// Connect to the messaging serice
+	// Connect to the messaging service
 	if err := messagingService.Connect(); err != nil {
 		panic(err)
 	}
