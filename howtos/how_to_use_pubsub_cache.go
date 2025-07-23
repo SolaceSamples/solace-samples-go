@@ -221,7 +221,7 @@ func main() {
 	// Send the cache request and retrieve the cache response using a callback
 	HowToSendCacheRequestAndProcessCacheResponseWithChannel(directReceiver, cachedMessageSubscriptionRequest)
 
-	fmt.Println("\n===Interrupt (CTR+C) to handle graceful terminaltion of the messaiging service===")
+	fmt.Println("\n===Interrupt (CTR+C) to handle graceful termination of the messaging service===")
 
 	// cleanup after the main calling function has finished execution
 	defer func() {
