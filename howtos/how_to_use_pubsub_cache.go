@@ -29,9 +29,9 @@ func getEnv(key, def string) string {
 // HowToGetCacheRequestConfiguration - example of how to retrieve the cache request
 // based on the different supported strategies
 func HowToGetCacheRequestConfiguration(cacheRequestStrategy resource.CachedMessageSubscriptionStrategy) resource.CachedMessageSubscriptionRequest {
-	// specific the topic name
+	// specify the topic name
 	topic := "MaxMsgs3/default/notcached"
-	// specific the cache name
+	// specify the cache name
 	cacheName := "CacheMessages"
 	var cacheRequestConfig resource.CachedMessageSubscriptionRequest
 
