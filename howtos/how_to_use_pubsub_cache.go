@@ -148,7 +148,7 @@ func HowToSendCacheRequestAndProcessCacheResponseWithChannel(directReceiver sola
 		fmt.Printf("Received Cache Response; Error %s\n", cacheResponse.GetError())
 
 	case <-time.After(1 * time.Second):
-		fmt.Printf("timed out waiting for cache response to be recieved")
+		fmt.Printf("timed out waiting for cache response to be received")
 	}
 
 	// ...
