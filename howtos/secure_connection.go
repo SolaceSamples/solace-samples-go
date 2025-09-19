@@ -38,16 +38,42 @@ func main() {
 	}
 
 	// Skip certificate validation
-	messagingService, err := messaging.NewMessagingServiceBuilder().
-		FromConfigurationProvider(brokerConfig).
-		WithTransportSecurityStrategy(config.NewTransportSecurityStrategy().WithoutCertificateValidation()).
-		Build()
+	// messagingService, err := messaging.NewMessagingServiceBuilder().
+	// 	FromConfigurationProvider(brokerConfig).
+	// 	WithTransportSecurityStrategy(config.NewTransportSecurityStrategy().WithoutCertificateValidation()).
+	// 	Build()
 
 	// With Certificate Validation. Note: assuming ou have a /trust_store dir with the .pem file stored in it
 	// messagingService, err := messaging.NewMessagingServiceBuilder().
 	// 	FromConfigurationProvider(brokerConfig).
-	// 	WithTransportSecurityStrategy(config.NewTransportSecurityStrategy().WithCertificateValidation(false, true, "./trust_store", "")).
+	// 	WithTransportSecurityStrategy(config.NewTransportSecurityStrategy().WithCertificateValidation(false, true, "howtos/fixtures/", "")).
 	// 	Build()
+
+	// With Client Certificate Authentication (mTLS)
+	// This demonstrates mutual TLS authentication where both client and server authenticate each other
+	//
+	// Certificate Setup Steps:
+	// 1. Generate a private key and self-signed certificate in one command (A sample ./howtos/fixtures/api-client.pem file is provided for testing purposes only):
+	//    openssl req -x509 -newkey rsa:2048 -keyout private.key -out certificate.pem -days 365 -nodes && cat private.key certificate.pem > combined_cert_and_key.pem
+	//
+	// 2. Place the combined certificate file in howtos/fixtures/ directory:
+	//    cp combined_cert_and_key.pem howtos/fixtures/api-client.pem
+	//
+	// 3. Download your broker's CA certificate to howtos/fixtures/ directory:
+	//    For Solace Cloud: Download DigiCertGlobalRootG2.crt.pem from the broker's "Connect" tab
+	//    For on-premise: Get the CA certificate from your broker administrator
+	//
+	// Broker Configuration Requirements:
+	// 4. Add your client certificate to the broker's trusted certificate list
+	// 5. Add the client certificate CN (Common Name) as a client username on the broker
+	// 6. Enable client certificate authentication on your broker's Message VPN
+	//
+	// Usage with combined certificate and key in single PEM file:
+	messagingService, err := messaging.NewMessagingServiceBuilder().
+		FromConfigurationProvider(brokerConfig).
+		WithTransportSecurityStrategy(config.NewTransportSecurityStrategy().WithCertificateValidation(false, true, "./howtos/fixtures/", "")).
+		WithAuthenticationStrategy(config.ClientCertificateAuthentication("howtos/fixtures/api-client.pem", "howtos/fixtures/api-client.pem", "")).
+		Build()
 
 	if err != nil {
 		panic(err)
