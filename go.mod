@@ -1,8 +1,8 @@
 module SolaceSamples.com/PubSub+Go
 
-go 1.17
+go 1.25
 
-require solace.dev/go/messaging v1.8.0
+require solace.dev/go/messaging v1.10.0
 
 require solace.dev/go/messaging-trace/opentelemetry v1.0.0
 
