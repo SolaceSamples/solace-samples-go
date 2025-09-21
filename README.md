@@ -43,7 +43,7 @@ The `secure_connection.go` sample demonstrates mutual TLS authentication where b
 
 #### Quick Setup Steps
 
-1. **Generate client certificate and key in one command (A sample ./howtos/fixtures/api-client.pem file is provided for testing purposes only):**
+1. **Generate client certificate and key in one command:**
    ```bash
    openssl req -x509 -newkey rsa:2048 -keyout private.key -out certificate.pem -days 365 -nodes && cat private.key certificate.pem > combined_cert_and_key.pem
    ```

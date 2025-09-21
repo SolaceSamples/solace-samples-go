@@ -53,7 +53,7 @@ func main() {
 	// This demonstrates mutual TLS authentication where both client and server authenticate each other
 	//
 	// Certificate Setup Steps:
-	// 1. Generate a private key and self-signed certificate in one command (A sample ./howtos/fixtures/api-client.pem file is provided for testing purposes only):
+	// 1. Generate a private key and self-signed certificate in one command:
 	//    openssl req -x509 -newkey rsa:2048 -keyout private.key -out certificate.pem -days 365 -nodes && cat private.key certificate.pem > combined_cert_and_key.pem
 	//
 	// 2. Place the combined certificate file in howtos/fixtures/ directory:
