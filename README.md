@@ -58,11 +58,12 @@ The `secure_connection.go` sample demonstrates mutual TLS authentication where b
    - **Solace Cloud**: Download `DigiCertGlobalRootG2.crt.pem` from your broker's "Connect" tab
    - **On-premise**: Get the CA certificate from your broker administrator
 
-   Place it in the fixtures directory for certificate validation.
+   Place it in the `howtos/fixtures` directory for certificate validation.
 
 #### Broker Configuration Requirements
 
 4. **Configure your Solace broker:**
+  [Documentation for Client Certificate Authentication](https://docs.solace.com/Cloud/ght_client_certs.htm)
    - Add your client certificate to the broker's trusted certificate list
    - Create a client username matching your certificate's Common Name (CN)
    - Enable client certificate authentication on your Message VPN
