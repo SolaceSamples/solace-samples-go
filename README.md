@@ -12,6 +12,8 @@ This repository contains sample code to showcase how the Solace PubSub+ Go API c
    1. run `go get solace.dev/go/messaging`
    1. Downloading the API archive from the [Solace Community](https://solace.community/group/4-solace-early-access-golang-api)
    1. Clone the source code into the root of this repo
+1. Make sure you have CGO, gcc, and stdlib headers installed
+   1. e.g. on Ubuntu systems you can execute `apt install -y gcc libc6-dev`
 
 ## Run Patterns
 
@@ -35,9 +37,49 @@ SOLACE_HOST=<host_name> SOLACE_VPN=<vpn_name> SOLACE_USERNAME=<username> SOLACE_
 
 This directory contains code that showcases different features of the API
 
+### Client Certificate Authentication (mTLS)
+
+The `secure_connection.go` sample demonstrates mutual TLS authentication where both client and server authenticate each other using X.509 certificates.
+
+#### Quick Setup Steps
+
+1. **Generate client certificate and key in one command:**
+   ```bash
+   openssl req -x509 -newkey rsa:2048 -keyout private.key -out certificate.pem -days 365 -nodes && cat private.key certificate.pem > combined_cert_and_key.pem
+   ```
+   When prompted, fill in the certificate details (the Common Name will be used as the client username).
+
+2. **Place the combined certificate in the fixtures directory:**
+   ```bash
+   cp combined_cert_and_key.pem howtos/fixtures/api-client.pem
+   ```
+
+3. **Download your broker's CA certificate:**
+   - **Solace Cloud**: Download `DigiCertGlobalRootG2.crt.pem` from your broker's "Connect" tab
+   - **On-premise**: Get the CA certificate from your broker administrator
+
+   Place it in the `howtos/fixtures` directory for certificate validation.
+
+#### Broker Configuration Requirements
+
+4. **Configure your Solace broker:**
+  [Documentation for Client Certificate Authentication](https://docs.solace.com/Cloud/ght_client_certs.htm)
+   - Add your client certificate to the broker's trusted certificate list
+   - Create a client username matching your certificate's Common Name (CN)
+   - Enable client certificate authentication on your Message VPN
+
+#### Usage
+
+Run the secure connection sample with the mTLS configuration section uncommented to test client certificate authentication:
+
+```bash
+cd howtos
+go run secure_connection.go
+```
+
 ## Supported Environments
 
-- See the list of supported environments here: [Solace Go API - Supported Environments](https://docs.solace.com/API/API-Developer-Guide/Supported-Environments.htm#Go)
+- See the list of supported environments here: [Solace Go API - Supported Environments](https://docs.solace.com/API/API-Developer-Guide-Go/Go-API-supported-Environments.htm)
 - Monitor the Solace Community for updates on supported environments. 
 
 ## Resources

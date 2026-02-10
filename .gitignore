@@ -22,3 +22,6 @@ trust_store/
 
 # .DS_Store
 .DS_Store
+
+# Self signed certificates and keys
+howtos/fixtures/api-client.pem
