@@ -56,7 +56,7 @@ func main() {
 		panic(err)
 	}
 
-	// Connect to the messaging serice
+	// Connect to the messaging service
 	if err := messagingService.Connect(); err != nil {
 		panic(err)
 	}
@@ -103,6 +103,8 @@ func main() {
 			// NOTE: publishing to topic, so make sure GuaranteedReceiver queue is subscribed to same topic,
 			//       or enable "Reject Message to Sender on No Subscription Match" the client-profile
 			publishErr := persistentPublisher.Publish(message, topic, nil, nil)
+			// print out the message sent
+			fmt.Printf("Published message with sequence number %d\n", msgSeqNum)
 			// Block until message is acknowledged
 			// publishErr := persistentPublisher.PublishAwaitAcknowledgement(message, topic, 2*time.Second, nil)
 
