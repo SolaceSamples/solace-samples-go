@@ -13,19 +13,17 @@ import (
 	"solace.dev/go/messaging/pkg/solace/resource"
 )
 
-var persistentReceiver solace.PersistentMessageReceiver
-
 // Message Handler
-func MessageHandler(message message.InboundMessage) {
+func MessageHandler(receiver solace.PersistentMessageReceiver, msg message.InboundMessage) {
 	var messageBody string
 
-	if payload, ok := message.GetPayloadAsString(); ok {
+	if payload, ok := msg.GetPayloadAsString(); ok {
 		messageBody = payload
-	} else if payload, ok := message.GetPayloadAsBytes(); ok {
+	} else if payload, ok := msg.GetPayloadAsBytes(); ok {
 		messageBody = string(payload)
 	}
 
-	persistentReceiver.Ack(message)
+	receiver.Ack(msg)
 	fmt.Printf("Received Message Body %s \n", messageBody)
 	// fmt.Printf("Message Dump %s \n", message)
 }
@@ -77,7 +75,7 @@ func main() {
 	// persistentReceiver, err := messagingService.CreatePersistentMessageReceiverBuilder().WithMessageAutoAcknowledgement().WithMissingResourcesCreationStrategy(strategy).WithSubscriptions(topic).Build(durableExclusiveQueue)
 
 	// Non-durable Queue
-	persistentReceiver, err = messagingService.CreatePersistentMessageReceiverBuilder().WithMessageClientAcknowledgement().WithMissingResourcesCreationStrategy(strategy).WithSubscriptions(topic).Build(nonDurableExclusiveQueue)
+	persistentReceiver, err := messagingService.CreatePersistentMessageReceiverBuilder().WithMessageClientAcknowledgement().WithMissingResourcesCreationStrategy(strategy).WithSubscriptions(topic).Build(nonDurableExclusiveQueue)
 
 	// Handling a panic from a non existing queue
 	defer func() {
@@ -94,7 +92,7 @@ func main() {
 	fmt.Println("Persistent Receiver running? ", persistentReceiver.IsRunning())
 
 	// Register Message callback handler to the Message Receiver
-	if regErr := persistentReceiver.ReceiveAsync(MessageHandler); regErr != nil {
+	if regErr := persistentReceiver.ReceiveAsync(func(msg message.InboundMessage) { MessageHandler(persistentReceiver, msg) }); regErr != nil {
 		panic(regErr)
 	}
 	fmt.Printf("\n Bound to queue: %s\n", queueName)
