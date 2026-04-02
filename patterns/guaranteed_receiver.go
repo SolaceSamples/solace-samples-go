@@ -65,7 +65,7 @@ func main() {
 	fmt.Println("Connected to the broker? ", messagingService.IsConnected())
 
 	// queueName := "durable-queue"
-	// durableExclusiveQueue := resource.QueueDurableExclusive("durable-queue")
+	// durableExclusiveQueue := resource.QueueDurableExclusive(queueName)
 	queueName := "nondurable-queue"
 	nonDurableExclusiveQueue := resource.QueueNonDurableExclusive(queueName)
 	topicString := TopicPrefix + "/persistent/publisher"
