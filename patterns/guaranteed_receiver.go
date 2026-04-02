@@ -67,7 +67,7 @@ func main() {
 	// queueName := "durable-queue"
 	// durableExclusiveQueue := resource.QueueDurableExclusive("durable-queue")
 	queueName := "nondurable-queue"
-	nonDurableExclusiveQueue := resource.QueueNonDurableExclusive("nondurable-queue")
+	nonDurableExclusiveQueue := resource.QueueNonDurableExclusive(queueName)
 	topicString := TopicPrefix + "/persistent/publisher"
 	topic := resource.TopicSubscriptionOf(topicString)
 
